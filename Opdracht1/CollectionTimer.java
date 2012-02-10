@@ -11,14 +11,23 @@ public abstract class CollectionTimer{
 	public abstract void addElement(Integer elem);
 
 	public boolean extract(int amount){
-		
+		if (amount < getSize()){
+			return false;
+		}
+
+
+		for( i = 0; i < amount; i+=1){
+			removeElement();
+		}
 		return true;
 	}
 
 	public abstract int getSize();
 
 	public void insert(int amount){
-
+		for (i = 0; i < amount; i += 1){
+			addElement();
+		}
 	}
 
 	public abstract boolean isEmpty();
@@ -30,6 +39,9 @@ public abstract class CollectionTimer{
 	}
 
 	public long time(int[] mutations){
+		if(mutations == null)
+		mutations = DEFAULT_MUTATIONS;
+
 		return 1;
 	}
 }

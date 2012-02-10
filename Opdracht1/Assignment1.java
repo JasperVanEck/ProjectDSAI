@@ -7,7 +7,11 @@ public class Assignment1 extends Object{
 	private ArrayList<Queue<Integer>> queue;
 
 	public static void main(String[] args){
-	
+		try{
+
+		}catch{
+
+		}
 	}
 
 	public void benchmark(){
