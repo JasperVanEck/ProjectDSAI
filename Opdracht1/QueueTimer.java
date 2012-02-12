@@ -10,6 +10,8 @@ public class QueueTimer extends CollectionTimer{
 		this.queue = queue;
 	}
 
+	//Wat is er met die derde constructor?
+
 	public void addElem(Integer elem){
 		queue.add(elem);
 	}
