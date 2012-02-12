@@ -4,8 +4,12 @@ public abstract class CollectionTimer{
 	public static int[] DEFAULT_MUTATIONS = {-10000,10000};
 	private Random elemGen;
 
+	public CollectionTimer(){
+		elemGen = new Random(0);
+	}
+
 	public CollectionTimer(long elemGenSeed){
-		elemGen = Random(elemGenSeed);
+		elemGen = new Random(elemGenSeed);
 	}
 
 	public abstract void addElement(Integer elem);
@@ -16,7 +20,7 @@ public abstract class CollectionTimer{
 		}
 
 
-		for( i = 0; i < amount; i+=1){
+		for(int i = 0; i < amount; i++){
 			removeElement();
 		}
 		return true;
@@ -25,8 +29,8 @@ public abstract class CollectionTimer{
 	public abstract int getSize();
 
 	public void insert(int amount){
-		for (i = 0; i < amount; i += 1){
-			addElement();
+		for (int i = 0; i < amount; i++){
+			addElement(new Integer(elemGen.nextInt()));
 		}
 	}
 
@@ -35,13 +39,33 @@ public abstract class CollectionTimer{
 	public abstract void removeElement();
 
 	public long time(){
-		return 1;
+		long startTime = System.nanoTime();
+		int[] mutations = DEFAULT_MUTATIONS;
+
+                for(int i=1;i <= mutations.length;i++){
+                        if(mutations[i]>0){
+                                insert(mutations[i]);
+                        }else{
+                                extract(-mutations[i]);
+                        }
+                }
+
+		return System.nanoTime() - startTime;
 	}
 
 	public long time(int[] mutations){
 		if(mutations == null)
 		mutations = DEFAULT_MUTATIONS;
 
-		return 1;
+		long startTime = System.nanoTime();
+		for(int i=1;i <= mutations.length;i++){
+			if(mutations[i]>0){
+				insert(mutations[i]);
+			}else{
+				extract(-mutations[i]);
+			}
+		}
+
+		return System.nanoTime() - startTime;
 	}
 }

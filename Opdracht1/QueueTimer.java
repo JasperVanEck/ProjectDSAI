@@ -1,5 +1,7 @@
+import java.util.Queue;
+
 public class QueueTimer extends CollectionTimer{
-	private ArrayList<Queue<Integer>> queue;
+	private Queue<Integer> queue;
 
 	public QueueTimer(Queue<Integer> queue){
 		this.queue = queue;
@@ -12,18 +14,23 @@ public class QueueTimer extends CollectionTimer{
 
 	//Wat is er met die derde constructor?
 
-	public void addElem(Integer elem){
+
+	@Override
+	public void addElement(Integer elem){
 		queue.add(elem);
 	}
 
+	@Override
 	public int getSize(){
-		return = queue.size();
+		return queue.size();
 	}
 
+	@Override
 	public boolean isEmpty(){
 		return queue.isEmpty();
 	}
 
+	@Override
 	public void removeElement(){
 		if(isEmpty()){
 			System.out.printf("Index out of bound");

@@ -1,12 +1,11 @@
 import java.util.List;
 
 public class ListTimer extends CollectionTimer{
-	private ArrayList<List<Integer>> list;
+	private List<Integer> list;
 
 	public ListTimer(List<Integer> list){
 		this.list = list;
 	}
-
 
 	public ListTimer(List<Integer> list, long elemGenSeed){
 		super(elemGenSeed);
@@ -15,22 +14,22 @@ public class ListTimer extends CollectionTimer{
 
 	//Wat is er aan de hand met de long van de derde constructor?
 	//Nu maar weg gelaten.
-
-	public void addElem(Integer Elem){
+	@Override
+	public void addElement(Integer Elem){
 		list.add(Elem);
 	}
-
+	@Override
 	public int getSize(){
 		return list.size();
 	}
-
+	@Override
 	public boolean isEmpty(){
-		return list.isEmpty;
+		return list.isEmpty();
 	}
-
+	@Override
 	public void removeElement(){
 		int last = getSize();
-		if(last=> 0){
+		if(last >= 0){
 			list.remove(last);
 		}else{
 			System.out.printf("Index out of Bound");
