@@ -19,7 +19,8 @@ public abstract class CollectionTimer{
 			return false;
 		}
 
-		for(int i = 0; i < amount; i++){
+		for(int i = 0; i <= amount; i++){
+			System.out.printf("i = %d\n", i);
 			removeElement();
 		}
 		return true;
@@ -28,7 +29,7 @@ public abstract class CollectionTimer{
 	public abstract int getSize();
 
 	public void insert(int amount){
-		for (int i = 0; i < amount; i++){
+		for (int i = 0; i <= amount; i++){
 			this.addElement(new Integer(elemGen.nextInt()));
 		}
 	}
