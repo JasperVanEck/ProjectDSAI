@@ -1,7 +1,7 @@
 import java.util.Random;
 
 public abstract class CollectionTimer{
-	public static int[] DEFAULT_MUTATIONS = {-10000,10000};
+	public static int[] DEFAULT_MUTATIONS = {10000,-10000};
 	private Random elemGen;
 
 	public CollectionTimer(){
@@ -15,13 +15,13 @@ public abstract class CollectionTimer{
 	public abstract void addElement(Integer elem);
 
 	public boolean extract(int amount){
-		if (amount < getSize()){
+		if (amount < this.getSize()){
 			return false;
 		}
 
 
 		for(int i = 0; i < amount; i++){
-			removeElement();
+			this.removeElement();
 		}
 		return true;
 	}
@@ -30,7 +30,7 @@ public abstract class CollectionTimer{
 
 	public void insert(int amount){
 		for (int i = 0; i < amount; i++){
-			addElement(new Integer(elemGen.nextInt()));
+			this.addElement(new Integer(elemGen.nextInt()));
 		}
 	}
 
@@ -42,11 +42,11 @@ public abstract class CollectionTimer{
 		long startTime = System.nanoTime();
 		int[] mutations = DEFAULT_MUTATIONS;
 
-                for(int i=1;i <= mutations.length;i++){
+                for(int i=0;i <= mutations.length;i++){
                         if(mutations[i]>0){
-                                insert(mutations[i]);
+                                this.insert(mutations[i]);
                         }else{
-                                extract(-mutations[i]);
+                                this.extract(-mutations[i]);
                         }
                 }
 
@@ -58,11 +58,13 @@ public abstract class CollectionTimer{
 		mutations = DEFAULT_MUTATIONS;
 
 		long startTime = System.nanoTime();
-		for(int i=1;i <= mutations.length;i++){
+		for(int i=0;i <= mutations.length;i++){
 			if(mutations[i]>0){
-				insert(mutations[i]);
+				this.insert(mutations[i]);
+				System.out.printf("Ik doe een insert \n");
 			}else{
-				extract(-mutations[i]);
+				this.extract(-mutations[i]);
+				System.out.printf("Ik doe een extract \n");
 			}
 		}
 
