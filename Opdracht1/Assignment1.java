@@ -69,7 +69,7 @@ public class Assignment1 extends Object{
                 for(List listings: lists){
                         ListTimer timerList = new ListTimer(listings);
                         long listTime = timerList.time();
-                        System.out.printf("De verstreken tijd na de operaties op de %s: %d ns\n", listNames[teller], listTime);
+                        System.out.printf("De verstreken tijd na de operaties op de %s: %d ms\n", listNames[teller], listTime);
 			teller++;
                 }
 
@@ -77,7 +77,7 @@ public class Assignment1 extends Object{
                 for(Queue queueings: queues){
                         QueueTimer timerQueue = new QueueTimer(queueings);
                         long queueTime = timerQueue.time();
-                        System.out.printf("De verstreken tijd na de operaties op de %s: %d ns\n", queueNames[teller], queueTime);
+                        System.out.printf("De verstreken tijd na de operaties op de %s: %d ms\n", queueNames[teller], queueTime);
 			teller++;
                 }
 	}
@@ -90,7 +90,7 @@ public class Assignment1 extends Object{
                 for(List listings: lists){
                         ListTimer timerList = new ListTimer(listings, elemGenSeed);
                         long listTime = timerList.time();
-                        System.out.printf("De verstreken tijd na de operaties op de %s: %d ns\n", listNames[teller], listTime);
+                        System.out.printf("De verstreken tijd na de operaties op de %s: %d ms\n", listNames[teller], listTime);
                 	teller++;
 		}
 
@@ -98,7 +98,7 @@ public class Assignment1 extends Object{
                 for(Queue queueings: queues){
                         QueueTimer timerQueue = new QueueTimer(queueings, elemGenSeed);
                         long queueTime = timerQueue.time();
-                        System.out.printf("De verstreken tijd na de operaties op de %s: %d ns\n", queueNames[teller], queueTime);
+                        System.out.printf("De verstreken tijd na de operaties op de %s: %d ms\n", queueNames[teller], queueTime);
 			teller++;
                 }
 	}
@@ -111,7 +111,7 @@ public class Assignment1 extends Object{
 		for(List listings: lists){
 			ListTimer timerList = new ListTimer(listings, elemGenSeed);
 			long listTime = timerList.time(mutations);
-			System.out.printf("De verstreken tijd na de operaties op de %s: %d ns\n", listNames[teller], listTime);
+			System.out.printf("De verstreken tijd na de operaties op de %s: %d ms\n", listNames[teller], listTime);
 			teller++;
 		}
 
@@ -119,7 +119,7 @@ public class Assignment1 extends Object{
                 for(Queue queueings: queues){
                         QueueTimer timerQueue = new QueueTimer(queueings, elemGenSeed);
                         long queueTime = timerQueue.time(mutations);
-                        System.out.printf("De verstreken tijd na de operaties op de %s: %d ns\n", queueNames[teller], queueTime);
+                        System.out.printf("De verstreken tijd na de operaties op de %s: %d ms\n", queueNames[teller], queueTime);
                 	teller++;
 			}
 	}

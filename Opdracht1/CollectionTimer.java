@@ -38,7 +38,7 @@ public abstract class CollectionTimer{
 	public abstract void removeElement();
 
 	public long time(){
-		long startTime = System.nanoTime();
+		long startTime = System.currentTimeMillis();
 		int[] mutations = DEFAULT_MUTATIONS;
 		boolean extractSucces;
 
@@ -50,14 +50,14 @@ public abstract class CollectionTimer{
                         }
                 }
 
-		return System.nanoTime() - startTime;
+		return System.currentTimeMillis() - startTime;
 	}
 
 	public long time(int[] mutations){
 		if(mutations == null)
 		mutations = DEFAULT_MUTATIONS;
 
-		long startTime = System.nanoTime();
+		long startTime = System.currentTimeMillis();
 		for(int i=0;i < mutations.length;i++){
 			if(mutations[i]>0){
 				this.insert(mutations[i]);
@@ -67,6 +67,6 @@ public abstract class CollectionTimer{
 			}
 		}
 
-		return System.nanoTime() - startTime;
+		return System.currentTimeMillis() - startTime;
 	}
 }
