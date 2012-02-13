@@ -28,7 +28,7 @@ public class ListTimer extends CollectionTimer{
 	}
 	@Override
 	public void removeElement(){
-		int last = this.getSize();
+		int last = this.getSize() -1;
 		if(last >= 0){
 			list.remove(last);
 		}else{

@@ -20,7 +20,6 @@ public abstract class CollectionTimer{
 		}
 
 		for(int i = 0; i <= amount; i++){
-			System.out.printf("i = %d\n", i);
 			removeElement();
 		}
 		return true;
@@ -43,15 +42,11 @@ public abstract class CollectionTimer{
 		int[] mutations = DEFAULT_MUTATIONS;
 		boolean extractSucces;
 
-                for(int i=0;i <= mutations.length;i++){
+                for(int i=0;i < mutations.length;i++){
                         if(mutations[i]>0){
                                 this.insert(mutations[i]);
                         }else{
-                                extractSucces = this.extract(-mutations[i]);
-				if(!extractSucces){
-					System.out.printf("Kon geen elementen verwijderen\n");
-					System.exit(1);
-				}
+				this.extract(-mutations[i]);
                         }
                 }
 
@@ -63,13 +58,12 @@ public abstract class CollectionTimer{
 		mutations = DEFAULT_MUTATIONS;
 
 		long startTime = System.nanoTime();
-		for(int i=0;i <= mutations.length;i++){
+		for(int i=0;i < mutations.length;i++){
 			if(mutations[i]>0){
 				this.insert(mutations[i]);
-				System.out.printf("Ik doe een insert \n");
 			}else{
 				this.extract(-mutations[i]);
-				System.out.printf("Ik doe een extract \n");
+
 			}
 		}
 
