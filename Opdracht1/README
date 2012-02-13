@@ -1,0 +1,5 @@
+README 
+De input argumenten moeten worden gebruikt zoals aangegeven in de JavaDoc. 
+
+Tevens worden eerst de Lists afgewerkt en daarna pas de queues. Dit
+moet even gezegd worden, anders kan het zijn dat de linkedLists door elkaar worden gehaald van de queues.
