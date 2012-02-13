@@ -32,7 +32,7 @@ public class QueueTimer extends CollectionTimer{
 
 	@Override
 	public void removeElement(){
-		if(isEmpty()){
+		if(queue.isEmpty()){
 			System.out.printf("Index out of bound");
 			System.exit(1);
 		}else{

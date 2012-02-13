@@ -1,11 +1,25 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
+import java.util.LinkedList;
+import java.util.Stack;
+import java.util.Vector;
+import java.util.PriorityQueue;
+
 
 public class Assignment1 extends Object{
-	private List<Integer> list;
-	private Queue<Integer> queue;
+	private ArrayList<List<Integer>> lists = new ArrayList<List<Integer>>();
+	private ArrayList<Queue<Integer>> queues = new ArrayList<Queue<Integer>>();
 
+	//constructor
+	public Assignment1(){
+		lists.add(new ArrayList<Integer>());
+		lists.add(new LinkedList<Integer>());
+		lists.add(new Stack<Integer>());
+		lists.add(new Vector<Integer>());
+		queues.add(new LinkedList<Integer>());
+		queues.add(new PriorityQueue<Integer>());
+	}
 
 	// Main method
 	public static void main(String[] args){
@@ -32,7 +46,7 @@ public class Assignment1 extends Object{
 
 		Assignment1 test = new Assignment1();
 
-		if(elemGenSeed == 0 && mutations.length == 0){
+                if(elemGenSeed == 0 && mutations.length == 0){
 			test.benchmark();
 		}else if(elemGenSeed == 0 && mutations.length != 0){
 			test.benchmark(elemGenSeed, mutations);
@@ -48,37 +62,46 @@ public class Assignment1 extends Object{
 
 	// Het testen van de snelheid van de verschillende collections
 	public void benchmark(){
-		QueueTimer timerQueue = new QueueTimer(queue);
-		ListTimer timerList = new ListTimer(list);
+                for(List listings: lists){
+                        ListTimer timerList = new ListTimer(listings);
+                        long listTime = timerList.time();
+                        System.out.printf("De verstreken tijd na de operaties op de %s: %3.5f ns\n", listings, listTime);
+                }
 
-		long queueTime = timerQueue.time();
-		long listTime = timerList.time();
-
-		System.out.printf("De verstreken tijd na de operaties op de Queue: %3.5f ns \n", queueTime);
-		System.out.printf("De verstreken tijd na de operaties op de List: %3.5f ns \n", listTime);
+                for(Queue queueings: queues){
+                        QueueTimer timerQueue = new QueueTimer(queueings);
+                        long queueTime = timerQueue.time();
+                        System.out.printf("De verstreken tijd na de operaties op de %s: %3.5f ns\n", queueings, queueTime);
+                }
 	}
 
 	public void benchmark(long elemGenSeed){
-		QueueTimer timerQueue =  new QueueTimer(queue, elemGenSeed);
-                ListTimer timerList = new ListTimer(list, elemGenSeed);
+                for(List listings: lists){
+                        ListTimer timerList = new ListTimer(listings, elemGenSeed);
+                        long listTime = timerList.time();
+                        System.out.printf("De verstreken tijd na de operaties op de %s: %3.5f ns\n", listings, listTime);
+                }
 
-                long queueTime = timerQueue.time();
-                long listTime = timerList.time();
-
-                System.out.printf("De verstreken tijd na de operaties op de Queue: %3.5f ns \n", queueTime);
-                System.out.printf("De verstreken tijd na de operaties op de List: %3.5f ns \n", listTime);
+                for(Queue queueings: queues){
+                        QueueTimer timerQueue = new QueueTimer(queueings, elemGenSeed);
+                        long queueTime = timerQueue.time();
+                        System.out.printf("De verstreken tijd na de operaties op de %s: %3.5f ns\n", queueings, queueTime);
+                }
 	}
 
 	public void benchmark(long elemGenSeed, int[] mutations){
-		QueueTimer timerQueue = new QueueTimer(queue, elemGenSeed);
-                ListTimer timerList = new ListTimer(list, elemGenSeed);
 
-                long queueTime = timerQueue.time(mutations);
-                long listTime = timerList.time(mutations);
+		for(List listings: lists){
+			ListTimer timerList = new ListTimer(listings, elemGenSeed);
+			long listTime = timerList.time(mutations);
+			System.out.printf("De verstreken tijd na de operaties op de %s: %3.5f ns\n", listings, listTime);
+		}
 
-                System.out.printf("De verstreken tijd na de operaties op de Queue: %3.5f ns \n", queueTime);
-                System.out.printf("De verstreken tijd na de operaties op de List: %3.5f ns \n", listTime);
-
+                for(Queue queueings: queues){
+                        QueueTimer timerQueue = new QueueTimer(queueings, elemGenSeed);
+                        long queueTime = timerQueue.time(mutations);
+                        System.out.printf("De verstreken tijd na de operaties op de %s: %3.5f ns\n", queueings, queueTime);
+                }
 	}
 
 

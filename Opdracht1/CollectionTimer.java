@@ -15,13 +15,12 @@ public abstract class CollectionTimer{
 	public abstract void addElement(Integer elem);
 
 	public boolean extract(int amount){
-		if (amount < this.getSize()){
+		if (amount > getSize()){
 			return false;
 		}
 
-
 		for(int i = 0; i < amount; i++){
-			this.removeElement();
+			removeElement();
 		}
 		return true;
 	}
@@ -41,12 +40,17 @@ public abstract class CollectionTimer{
 	public long time(){
 		long startTime = System.nanoTime();
 		int[] mutations = DEFAULT_MUTATIONS;
+		boolean extractSucces;
 
                 for(int i=0;i <= mutations.length;i++){
                         if(mutations[i]>0){
                                 this.insert(mutations[i]);
                         }else{
-                                this.extract(-mutations[i]);
+                                extractSucces = this.extract(-mutations[i]);
+				if(!extractSucces){
+					System.out.printf("Kon geen elementen verwijderen\n");
+					System.exit(1);
+				}
                         }
                 }
 
