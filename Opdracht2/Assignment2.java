@@ -65,10 +65,10 @@ public final class Assignment2 extends Calculator{
 				//The operator must be left associative and its precedence must be lower or equal than the token on top of the stack OR
 				//the operator must be right associative and its precedence must be lower than the token on top of the stack.
 				while(stack.peek() instanceof Operator && 
-					((((operator)opera).isLeftAssoc() || ((Operator)opera).isAssoc()) && 
-					(((Operator)opera).getPrecendence() <= ((Operator)stack.peek()).getPrecendence())) || 
-					((((operator)opera).isRightAssoc() || ((Operator)opera).isAssoc()) && 
-					(((Operator)opera).getPrecendence() < ((Operator)stack.peek()).getPrecendence()))
+					((((Operator)opera).isLeftAssoc() || ((Operator)opera).isAssoc()) && 
+					(((Operator)opera).getPrecedence() <= ((Operator)stack.peek()).getPrecedence())) || 
+					((((Operator)opera).isRightAssoc() || ((Operator)opera).isAssoc()) && 
+					(((Operator)opera).getPrecedence() < ((Operator)stack.peek()).getPrecedence()))
 					){
 						que.enqueue(stack.pop());
 				}
@@ -85,7 +85,7 @@ public final class Assignment2 extends Calculator{
 					throw new CalculatorException("There is a missing left Parenthesis.");
 				}
 				
-				stack.pop()
+				stack.pop();
 			}else{
 				throw new CalculatorException("You didn't enter a correct infix sequence.");
 			}
