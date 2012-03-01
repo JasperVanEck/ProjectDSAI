@@ -27,14 +27,14 @@ public final class Assignment2 extends Calculator{
 		}
 		
 		Scanner scanner = new Scanner(System.in);
-		String input;
 
 		//Keep performing calculations, until EOF.
-		while(!(args[0].equals("-benchmark"))){
-			System.out.printf(">> ");
-			input = scanner.nextLine();
-			System.out.printf("%f \n", ass2.calc(ass2.parseExpr(input, notationType) , notationType));
-		}
+		//while(!args[0].equals("-benchmark")){
+		//	System.out.printf(">> >>");
+		//	String input = scanner.nextLine();
+		//	System.out.printf("%3.5f \n", ass2.calc(ass2.parseExpr(input, notationType), notationType));
+		//}
+
 	}
 
 	//Determine whether to do a post- or infix calculation.
@@ -56,9 +56,10 @@ public final class Assignment2 extends Calculator{
 		Token opera;
 		//Start of the shunting yard algorithm
 		while(!expr.isEmpty()){
-				System.out.printf("Ik zit in mn post fix\n");
+				System.out.printf("Ik zit in mn infix fuck....\n");
 			opera = expr.dequeue();
-			
+				boolean test = opera instanceof Operand;
+				System.out.printf( test + "\n");
 			//Queue if token is operand
 			if(opera instanceof Operand){
 				que.enqueue(opera);
@@ -123,10 +124,10 @@ public final class Assignment2 extends Calculator{
 				//retrieve the operands from the queue.
 				while(expr.front() instanceof Operand){
 					operands.push(expr.dequeue());
-					System.out.printf("operands ophalen.\n");
+					System.out.print("operands ophalen.\n");
 				}
-				
-				if(!expr.isEmpty() && ((Operator) expr.front()).getArity() == 1){
+				System.out.printf(expr.isEmpty()+ "\n" + expr.size() + "\n");
+				if(!expr.isEmpty() && ((Operator)expr.front()).getArity() == 1){
 					try{
 						System.out.printf("Arity 1 fucked up\n");
 						operator = expr.dequeue();
@@ -218,6 +219,7 @@ public final class Assignment2 extends Calculator{
 				}
 				
 				que.enqueue(toToken(expr.substring(tempPos, pos)));
+			//Minus signs following a parenthesis is a negate symbol.
 			}else if((pos+2 < expr.length()) && expr.charAt(pos) == '(' && expr.charAt(pos+1) == '-'){
 				que.enqueue(toToken("("));
 				que.enqueue(toToken("_"));
