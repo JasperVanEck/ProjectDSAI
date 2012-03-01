@@ -56,6 +56,7 @@ public final class Assignment2 extends Calculator{
 		Token opera;
 		//Start of the shunting yard algorithm
 		while(!expr.isEmpty()){
+				System.out.printf("Ik zit in mn post fix\n");
 			opera = expr.dequeue();
 			
 			//Queue if token is operand
@@ -217,6 +218,10 @@ public final class Assignment2 extends Calculator{
 				}
 				
 				que.enqueue(toToken(expr.substring(tempPos, pos)));
+			}else if((pos+2 < expr.length()) && expr.charAt(pos) == '(' && expr.charAt(pos+1) == '-'){
+				que.enqueue(toToken("("));
+				que.enqueue(toToken("_"));
+				pos = pos + 2;
 			}else{
 				que.enqueue(toToken(Character.toString(expr.charAt(pos))));
 				pos++;
