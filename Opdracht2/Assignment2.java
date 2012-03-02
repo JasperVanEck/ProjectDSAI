@@ -29,7 +29,6 @@ public final class Assignment2 extends Calculator{
 		//Start of the shunting yard algorithm
 		while(!expr.isEmpty()){
 			opera = expr.dequeue();
-			//System.out.printf(opera.toString() + "\n");
 			//Queue if token is operand
 			if(opera instanceof Operand){
 				que.enqueue(opera);
@@ -50,22 +49,20 @@ public final class Assignment2 extends Calculator{
 			}else if(opera instanceof Operator){
 				//The operator must be left associative and its precedence must be lower or equal than the token on top of the stack OR
 				//the operator must be right associative and its precedence must be lower than the token on top of the stack.
-				//if(!stack.isEmpty()){
-					//System.out.print(stack.peek() instanceof Operator);
-					if((stack.peek() instanceof Operator) && !stack.peek().equals(Parenthesis.LEFT_PARENTHESIS) && !stack.peek().equals(Parenthesis.RIGHT_PARENTHESIS)){
-						while(stack.peek() instanceof Operator && 
-							((((Operator)opera).isLeftAssoc() || ((Operator)opera).isAssoc()) && 
-							(((Operator)opera).getPrecedence() <= ((Operator)stack.peek()).getPrecedence())) || 
-							((((Operator)opera).isRightAssoc() || ((Operator)opera).isAssoc()) && 
-							(((Operator)opera).getPrecedence() < ((Operator)stack.peek()).getPrecedence()))
-							){
-								que.enqueue(stack.pop());
-								if(!(stack.peek() instanceof Operator)){
-									break;
-								}
-						}
+				if((stack.peek() instanceof Operator) && !stack.peek().equals(Parenthesis.LEFT_PARENTHESIS) && !stack.peek().equals(Parenthesis.RIGHT_PARENTHESIS)){
+					while(stack.peek() instanceof Operator && 
+						((((Operator)opera).isLeftAssoc() || ((Operator)opera).isAssoc()) && 
+						(((Operator)opera).getPrecedence() <= ((Operator)stack.peek()).getPrecedence())) || 
+						((((Operator)opera).isRightAssoc() || ((Operator)opera).isAssoc()) && 
+						(((Operator)opera).getPrecedence() < ((Operator)stack.peek()).getPrecedence()))
+						){
+							que.enqueue(stack.pop());
+							//To make sure the bloody parenthesis, won't return exceptions.
+							if(!(stack.peek() instanceof Operator)){
+								break;
+							}
 					}
-				//}
+				}
 				stack.push(opera);
 			}else {
 				throw new CalculatorException("You didn't enter a correct infix sequence.");
