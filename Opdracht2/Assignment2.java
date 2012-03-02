@@ -111,8 +111,8 @@ public final class Assignment2 extends Calculator{
 						operand1 = Double.parseDouble(operands.pop().toString());
 						//Negative numbers or too big of a numbers arent nice to factorials.
 						if(operator.equals(Operator.FACTORIAL)){
-							if(operand1 < 0 || operand1 > 50){
-								throw new CalculatorException("The entered number for the factorial is either too small or too big.");
+							if(operand1 < 0 || operand1 > 50 || ((operand1 -(int)operand1) != 0)){
+								throw new CalculatorException("The entered number for the factorial is either too small, too big or not a natural number.");
 							}else{
 								operands.push(toToken(Double.toString(Operator.factorial((int)operand1))));
 							}
@@ -187,6 +187,7 @@ public final class Assignment2 extends Calculator{
 				que.enqueue(toToken("("));
 				que.enqueue(toToken("_"));
 				pos = pos + 2;
+			//Check for the negates
 			}else if(expr.charAt(0) == '-' || (pos+2 < expr.length() && isNumber(expr.charAt(pos+1)) 
 				&& expr.charAt(pos) == '-' && !isNumber(expr.charAt(pos-1)) ) ){
 				que.enqueue(toToken("_"));
