@@ -29,7 +29,7 @@ public final class Assignment2 extends Calculator{
 		//Start of the shunting yard algorithm
 		while(!expr.isEmpty()){
 			opera = expr.dequeue();
-			System.out.printf(opera.toString() + "\n");
+			//System.out.printf(opera.toString() + "\n");
 			//Queue if token is operand
 			if(opera instanceof Operand){
 				que.enqueue(opera);
@@ -51,7 +51,8 @@ public final class Assignment2 extends Calculator{
 				//The operator must be left associative and its precedence must be lower or equal than the token on top of the stack OR
 				//the operator must be right associative and its precedence must be lower than the token on top of the stack.
 				//if(!stack.isEmpty()){
-					if(!stack.peek().equals(Parenthesis.LEFT_PARENTHESIS) && !stack.peek().equals(Parenthesis.RIGHT_PARENTHESIS)){
+					//System.out.print(stack.peek() instanceof Operator);
+					if((stack.peek() instanceof Operator) && !stack.peek().equals(Parenthesis.LEFT_PARENTHESIS) && !stack.peek().equals(Parenthesis.RIGHT_PARENTHESIS)){
 						while(stack.peek() instanceof Operator && 
 							((((Operator)opera).isLeftAssoc() || ((Operator)opera).isAssoc()) && 
 							(((Operator)opera).getPrecedence() <= ((Operator)stack.peek()).getPrecedence())) || 
@@ -59,6 +60,9 @@ public final class Assignment2 extends Calculator{
 							(((Operator)opera).getPrecedence() < ((Operator)stack.peek()).getPrecedence()))
 							){
 								que.enqueue(stack.pop());
+								if(!(stack.peek() instanceof Operator)){
+									break;
+								}
 						}
 					}
 				//}
@@ -110,7 +114,7 @@ public final class Assignment2 extends Calculator{
 							if(operand1 < 0 || operand1 > 50){
 								throw new CalculatorException("The entered number for the factorial is either too small or too big.");
 							}else{
-								operands.push(toToken(Double.toString(Operator.factorial(operand1))));
+								operands.push(toToken(Double.toString(Operator.factorial((int)operand1))));
 							}
 						
 						}else if(operator.equals(Operator.NEGATE)){
