@@ -1,6 +1,6 @@
 public class TokenArrayStack extends Object implements TokenStack{
 	protected Token[] arr;
-	public static int DEFAULT_INIT_CAPACITY = 16;
+	public static int DEFAULT_INIT_CAPACITY = 100;
 	protected int top;
 
 	//Constructor using DEFAULT_INIT_CAPACITY.
@@ -53,9 +53,8 @@ public class TokenArrayStack extends Object implements TokenStack{
 
 	//pushing an element on top of the stack
 	public Token push(Token elem){
-		ensureCapacity();
-
 		top++;
+		ensureCapacity();
 		arr[top] = elem;
 
 		return elem;

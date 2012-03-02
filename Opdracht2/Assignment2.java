@@ -29,26 +29,13 @@ public final class Assignment2 extends Calculator{
 		//Start of the shunting yard algorithm
 		while(!expr.isEmpty()){
 			opera = expr.dequeue();
-			
+			System.out.printf(opera.toString() + "\n");
 			//Queue if token is operand
 			if(opera instanceof Operand){
 				que.enqueue(opera);
-			}else if(opera instanceof Operator){
-				//The operator must be left associative and its precedence must be lower or equal than the token on top of the stack OR
-				//the operator must be right associative and its precedence must be lower than the token on top of the stack.
-				if(!stack.isEmpty()){
-					while(stack.peek() instanceof Operator && 
-						((((Operator)opera).isLeftAssoc() || ((Operator)opera).isAssoc()) && 
-						(((Operator)opera).getPrecedence() <= ((Operator)stack.peek()).getPrecedence())) || 
-						((((Operator)opera).isRightAssoc() || ((Operator)opera).isAssoc()) && 
-						(((Operator)opera).getPrecedence() < ((Operator)stack.peek()).getPrecedence()))
-						){
-							que.enqueue(stack.pop());
-					}
-				}
-				stack.push(opera);
 			}else if(opera.equals(Parenthesis.LEFT_PARENTHESIS)){
-				stack.push(opera);
+				//push left parenthesis on stack.
+				stack.push(opera); 
 			}else if(opera.equals(Parenthesis.RIGHT_PARENTHESIS)){
 				//Ensure that there isnt a missing parenthesis.
 				while(!stack.isEmpty() && !stack.peek().equals(Parenthesis.LEFT_PARENTHESIS)){
@@ -58,9 +45,25 @@ public final class Assignment2 extends Calculator{
 				if(stack.isEmpty()){
 					throw new CalculatorException("There is a missing left Parenthesis.");
 				}
-				
+				//pop the right parenthesis.
 				stack.pop();
-			}else{
+			}else if(opera instanceof Operator){
+				//The operator must be left associative and its precedence must be lower or equal than the token on top of the stack OR
+				//the operator must be right associative and its precedence must be lower than the token on top of the stack.
+				//if(!stack.isEmpty()){
+					if(!stack.peek().equals(Parenthesis.LEFT_PARENTHESIS) && !stack.peek().equals(Parenthesis.RIGHT_PARENTHESIS)){
+						while(stack.peek() instanceof Operator && 
+							((((Operator)opera).isLeftAssoc() || ((Operator)opera).isAssoc()) && 
+							(((Operator)opera).getPrecedence() <= ((Operator)stack.peek()).getPrecedence())) || 
+							((((Operator)opera).isRightAssoc() || ((Operator)opera).isAssoc()) && 
+							(((Operator)opera).getPrecedence() < ((Operator)stack.peek()).getPrecedence()))
+							){
+								que.enqueue(stack.pop());
+						}
+					}
+				//}
+				stack.push(opera);
+			}else {
 				throw new CalculatorException("You didn't enter a correct infix sequence.");
 			}
 			
@@ -96,7 +99,7 @@ public final class Assignment2 extends Calculator{
 				while(expr.front() instanceof Operand){
 					operands.push(expr.dequeue());
 				}
-				System.out.printf(expr.isEmpty()+ "\n");
+				
 				if(!expr.isEmpty() && ((Operator)expr.front()).getArity() == 1){
 					try{
 						operator = expr.dequeue();
@@ -126,13 +129,13 @@ public final class Assignment2 extends Calculator{
 						if(operator.equals(Operator.ADD)){
 							operands.push(toToken(Double.toString(Operator.add(operand1,operand2))));
 						}else if(operator.equals(Operator.SUBTRACT)){
-							operands.push(toToken(Double.toString(Operator.subtract(operand1,operand2))));
+							operands.push(toToken(Double.toString(Operator.subtract(operand2,operand1))));
 						}else if(operator.equals(Operator.MULTIPLY)){
 							operands.push(toToken(Double.toString(Operator.multiply(operand1,operand2))));
 						}else if(operator.equals(Operator.DIVIDE)){
-							operands.push(toToken(Double.toString(Operator.divide(operand1,operand2))));
+							operands.push(toToken(Double.toString(Operator.divide(operand2,operand1))));
 						}else if(operator.equals(Operator.POWER)){
-							operands.push(toToken(Double.toString(Operator.power(operand1,operand2))));
+							operands.push(toToken(Double.toString(Operator.power(operand2,operand1))));
 						}
 						
 					}catch(NullPointerException e){
@@ -166,18 +169,6 @@ public final class Assignment2 extends Calculator{
 			}else if((pos+2 < expr.length()) && expr.charAt(pos) ==  '-' && expr.charAt(pos+1) == '-'){
 				que.enqueue(toToken("+"));//double negatives are postives.
 				pos = pos + 2;
-			
-			//Check whether a number is being negated
-			}else if((pos+2 < expr.length()) && expr.charAt(pos) == '-' && isNumber(expr.charAt(pos+1))){
-				int tempPos = ++pos;
-
-				while(pos < expr.length() && (isNumber(expr.charAt(pos)) || (expr.charAt(pos) == '.') )){
-					pos++;
-				}
-
-				que.enqueue(toToken("_"));
-				que.enqueue(toToken(expr.substring(tempPos, pos)));
-			
 			//Enqueue a whole number, including decimal point
 			}else if(isNumber(expr.charAt(pos)) || expr.charAt(pos) == '.'){
 				int tempPos = pos;
@@ -192,6 +183,10 @@ public final class Assignment2 extends Calculator{
 				que.enqueue(toToken("("));
 				que.enqueue(toToken("_"));
 				pos = pos + 2;
+			}else if(expr.charAt(0) == '-' || (pos+2 < expr.length() && isNumber(expr.charAt(pos+1)) 
+				&& expr.charAt(pos) == '-' && !isNumber(expr.charAt(pos-1)) ) ){
+				que.enqueue(toToken("_"));
+				pos++;
 			}else{
 				que.enqueue(toToken(Character.toString(expr.charAt(pos))));
 				pos++;
