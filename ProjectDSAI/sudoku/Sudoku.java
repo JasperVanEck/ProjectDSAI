@@ -5,17 +5,17 @@ public class Sudoku
 
 	public int[][] startSudoku = 
 	{
-			{0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0},
+			{0,0,5,0,9,0,0,0,1},
+			{0,0,0,0,0,2,0,7,3},
+			{7,6,0,0,0,8,2,0,0},
 			
-			{0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0},
+			{0,1,2,0,0,9,0,0,4},
+			{0,0,0,2,0,3,0,0,0},
+			{3,0,0,1,0,0,9,6,0},
 			
-			{0,0,0,0,0,0,0,5,0},
-			{0,0,0,0,0,0,0,4,0},
-			{0,3,2,0,0,0,0,0,1}
+			{0,0,1,9,0,0,0,5,8},
+			{9,7,0,5,0,0,0,0,0},
+			{5,0,0,0,3,0,7,0,0}
 	};
 	
 	
@@ -52,9 +52,19 @@ public class Sudoku
 	public static void main(String[] args)
 	{
 		Sudoku sudoku = new Sudoku();
-		sudoku.updateCell(8,7);
-		//System.out.print(sudoku.getValue(sudoku.possSudoku[8][8]));
-		System.out.printf(sudoku.toString());
+		
+		while(!sudoku.checkSolved())
+		{
+			for(int i=0; i<9; i++)
+			{
+				for(int j=0; j<9; j++)
+				{
+					sudoku.updateCell(i,j);
+				}
+			}
+			System.out.printf(sudoku.toString());
+			System.out.println("\n ========================= \n");
+		}
 	}
 	
 	// count how many values a single cell can have
@@ -131,7 +141,6 @@ public class Sudoku
 		{
 			if(i != row && getValue(possSudoku[i][col])!=0)
 			{
-				System.out.println("hao");
 				if(checkValue(possSudoku[row][col],getValue(possSudoku[i][col])))
 				{
 				deleteValue(possSudoku[row][col],getValue(possSudoku[i][col]));
@@ -145,7 +154,7 @@ public class Sudoku
 		{
 			if(i != col && getValue(possSudoku[row][i])!=0)
 			{
-				System.out.println("hao");
+			
 				if(checkValue(possSudoku[row][col],getValue(possSudoku[row][i])))
 				{
 					deleteValue(possSudoku[row][col],getValue(possSudoku[row][i]));
@@ -154,10 +163,30 @@ public class Sudoku
 		}
 	}
 	
+	public void updateQuad(int row, int col)
+	{
+		for(int i= 3 * (row/3); i< 3* ((row/3)+1);i++)
+		{
+			//System.out.print(i);
+			for(int j= 3 * (col/3); j< 3* ((col/3)+1);j++)
+			{
+				//System.out.print(j);
+				if(!(i == row && j == col) && getValue(possSudoku[i][j])!=0)
+				{
+					if(checkValue(possSudoku[row][col],getValue(possSudoku[i][j])))
+					{
+						deleteValue(possSudoku[row][col],getValue(possSudoku[i][j]));
+					}
+				}	
+			}
+		}
+	}
+	
 	public void updateCell(int row, int col)
 	{
 		updateRow(row,col);
 		updateColumns(row,col);
+		updateQuad(row,col);
 	}
 	
 	public void deleteValue(int cell[],int value)
