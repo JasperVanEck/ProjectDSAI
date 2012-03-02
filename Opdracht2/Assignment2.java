@@ -7,34 +7,6 @@ public final class Assignment2 extends Calculator{
 
 	public static void main(String[] args){
 		new Assignment2().init(args);
-		Assignment2 ass2 = new Assignment2();
-		//DEFAULT notationType.
-		Calculator.Notation notationType = Calculator.Notation.INFIX;
-
-		//Determine the correct amount of arguments.
-		if(args.length != 1){
-			throw new CalculatorException("Invalid amount of arguments.");
-		}
-
-		//Determine whether the arguments are correct.
-		if(!(args[0].equals("-postfix")) && !(args[0].equals("-rpn")) && !(args[0].equals("-infix")) && !(args[0].equals("-benchmark"))){
-			throw new CalculatorException("Invalid argument.");
-		}
-
-		//Changes the notationType if necessary.
-		if(args[0].equals("-postfix") || args[0].equals("-rpn")){
-			notationType = Calculator.Notation.POSTFIX;
-		}
-		
-		Scanner scanner = new Scanner(System.in);
-
-		//Keep performing calculations, until EOF.
-		//while(!args[0].equals("-benchmark")){
-		//	System.out.printf(">> >>");
-		//	String input = scanner.nextLine();
-		//	System.out.printf("%3.5f \n", ass2.calc(ass2.parseExpr(input, notationType), notationType));
-		//}
-
 	}
 
 	//Determine whether to do a post- or infix calculation.
@@ -56,23 +28,23 @@ public final class Assignment2 extends Calculator{
 		Token opera;
 		//Start of the shunting yard algorithm
 		while(!expr.isEmpty()){
-				System.out.printf("Ik zit in mn infix fuck....\n");
 			opera = expr.dequeue();
-				boolean test = opera instanceof Operand;
-				System.out.printf( test + "\n");
+			
 			//Queue if token is operand
 			if(opera instanceof Operand){
 				que.enqueue(opera);
 			}else if(opera instanceof Operator){
 				//The operator must be left associative and its precedence must be lower or equal than the token on top of the stack OR
 				//the operator must be right associative and its precedence must be lower than the token on top of the stack.
-				while(stack.peek() instanceof Operator && 
-					((((Operator)opera).isLeftAssoc() || ((Operator)opera).isAssoc()) && 
-					(((Operator)opera).getPrecedence() <= ((Operator)stack.peek()).getPrecedence())) || 
-					((((Operator)opera).isRightAssoc() || ((Operator)opera).isAssoc()) && 
-					(((Operator)opera).getPrecedence() < ((Operator)stack.peek()).getPrecedence()))
-					){
-						que.enqueue(stack.pop());
+				if(!stack.isEmpty()){
+					while(stack.peek() instanceof Operator && 
+						((((Operator)opera).isLeftAssoc() || ((Operator)opera).isAssoc()) && 
+						(((Operator)opera).getPrecedence() <= ((Operator)stack.peek()).getPrecedence())) || 
+						((((Operator)opera).isRightAssoc() || ((Operator)opera).isAssoc()) && 
+						(((Operator)opera).getPrecedence() < ((Operator)stack.peek()).getPrecedence()))
+						){
+							que.enqueue(stack.pop());
+					}
 				}
 				stack.push(opera);
 			}else if(opera.equals(Parenthesis.LEFT_PARENTHESIS)){
@@ -120,16 +92,13 @@ public final class Assignment2 extends Calculator{
 			
 			//iterate through the tokens.
 			while(!(expr.isEmpty())){
-				System.out.printf("Ik zit in mn post fix\n");
 				//retrieve the operands from the queue.
 				while(expr.front() instanceof Operand){
 					operands.push(expr.dequeue());
-					System.out.print("operands ophalen.\n");
 				}
-				System.out.printf(expr.isEmpty()+ "\n" + expr.size() + "\n");
+				System.out.printf(expr.isEmpty()+ "\n");
 				if(!expr.isEmpty() && ((Operator)expr.front()).getArity() == 1){
 					try{
-						System.out.printf("Arity 1 fucked up\n");
 						operator = expr.dequeue();
 
 						operand1 = Double.parseDouble(operands.pop().toString());
@@ -151,7 +120,6 @@ public final class Assignment2 extends Calculator{
 				}else if(!expr.isEmpty() && ((Operator)expr.front()).getArity() == 2){
 					try{
 						operator = expr.dequeue();
-						System.out.printf("Normale operators fucked.\n");
 						operand1 = Double.parseDouble(operands.pop().toString());
 						operand2 = Double.parseDouble(operands.pop().toString());
 						

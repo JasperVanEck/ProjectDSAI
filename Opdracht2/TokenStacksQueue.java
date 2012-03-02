@@ -36,7 +36,8 @@ public class TokenStacksQueue extends Object implements TokenQueue{
 		if(out.isEmpty()){
 			rearrange();
 		}
-		return out.pop();
+		Token tmp = out.pop();
+		return tmp;
 	}
 
 	//returns the size of the TokenStacksQueue.

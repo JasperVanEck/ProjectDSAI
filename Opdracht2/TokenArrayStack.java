@@ -54,8 +54,10 @@ public class TokenArrayStack extends Object implements TokenStack{
 	//pushing an element on top of the stack
 	public Token push(Token elem){
 		ensureCapacity();
-		arr[top] = elem;
+
 		top++;
+		arr[top] = elem;
+
 		return elem;
 	}
 
