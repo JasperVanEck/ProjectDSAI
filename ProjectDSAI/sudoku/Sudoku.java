@@ -1,25 +1,13 @@
+import java.io.*;
 
 public class Sudoku
 {
 	private int[][][] possSudoku = new int[9][9][9];
-
-	private int[][] startSudoku = 
-	{
-			{0,0,5, 0,9,0, 0,0,1},
-			{1,9,0, 6,0,2, 0,0,0},
-			{0,6,0, 0,0,8, 0,0,5},
-			
-			{0,1,2, 0,0,9, 0,0,4},
-			{0,0,0, 0,0,3, 0,0,0},
-			{3,0,0, 1,0,0, 9,6,0},
-			
-			{0,0,1, 9,0,0, 0,5,8},
-			{9,7,0, 5,0,0, 0,0,0},
-			{5,0,0, 0,3,0, 7,0,0}
-	};
+	private int[][] startSudoku = new int[9][9];
 
 	public Sudoku()
 	{
+		readSudoku();
 		makeNew();
 		for(int i=0;i<9;i++)
 		{
@@ -36,17 +24,36 @@ public class Sudoku
 	//create new sudoku (9x9)array, each cell can have value 1-9
 	public void makeNew()
 	{
-		for(int i = 0; i<9;i++)
+		for(int i = 0; i < 9; i++)
 		{
-			for(int j = 0; j<9;j++)
+			for(int j = 0; j < 9; j++)
 			{
-				for(int k = 0; k<9;k++)
+				for(int k = 0; k < 9; k++)
 				{
-					possSudoku[i][j][k]= k+1;
+					possSudoku[i][j][k] = k + 1;
 				}	
 			}
 		}
 	}
+	
+	public void readSudoku(){
+		try{
+			FileInputStream fstream = new FileInputStream("sudoku.txt");
+			DataInputStream in = new DataInputStream(fstream);
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			
+			for(int i = 0; i < 9; i++){
+				for(int j = 0; j < 9; j++){
+					startSudoku[i][j] = br.read() - 48;
+				}
+			}
+			in.close();
+		}catch(Exception e){
+			System.out.printf("Error: " + e.getMessage());
+		}
+	
+	}
+	
 	
 	public static void main(String[] args)
 	{
@@ -58,7 +65,7 @@ public class Sudoku
 		//System.out.printf(sudoku.toString());
 		
 	//	updateLockedCandidatesRow(value, q);
-		/*
+		
 		int stop = 0;
 		//while sudoku is not solved, use different tactics to search for solutions
 		while(!sudoku.checkSolved() && stop < 81)
@@ -72,7 +79,8 @@ public class Sudoku
 			//use other tactics
 			//not implemented yet!
 			stop++;
-		}*/
+		}
+		System.out.printf(sudoku.toString());
 		
 	}
 	
