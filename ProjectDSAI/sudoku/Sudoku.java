@@ -1,18 +1,16 @@
 
 public class Sudoku
 {
-	int possSudoku2[][] = { {1,0,0},
-			{0,1,0},
-			{0,0,1}};
-	public int[][][] possSudoku = new int[9][9][9];
-	public int[][] startSudoku = 
+	private int[][][] possSudoku = new int[9][9][9];
+
+	private int[][] startSudoku = 
 	{
 			{0,0,5, 0,9,0, 0,0,1},
 			{1,9,0, 6,0,2, 0,0,0},
-			{0,6,0, 0,0,8, 2,0,5},
+			{0,6,0, 0,0,8, 0,0,5},
 			
 			{0,1,2, 0,0,9, 0,0,4},
-			{0,0,0, 2,0,3, 0,0,0},
+			{0,0,0, 0,0,3, 0,0,0},
 			{3,0,0, 1,0,0, 9,6,0},
 			
 			{0,0,1, 9,0,0, 0,5,8},
@@ -56,9 +54,10 @@ public class Sudoku
 		//then fill in the known-in-advance numbers
 		Sudoku sudoku = new Sudoku();
 		sudoku.updateSingle();
-		System.out.printf(sudoku.toString());
+		sudoku.updateSingle();
+		//System.out.printf(sudoku.toString());
 		
-		sudoku.valueOnSingleRowQuad(0,2);
+	//	updateLockedCandidatesRow(value, q);
 		/*
 		int stop = 0;
 		//while sudoku is not solved, use different tactics to search for solutions
@@ -83,9 +82,9 @@ public class Sudoku
 		//iterate through 9x9 matrix
 		for(int i=0;i<9;i++)
 		{
-			for(int j=0; j<9; j++)
+			for(int j = 0; j < 9; j++)
 			{
-				if( countAmountNotZero(possSudoku[i][j])==1)
+				if( countAmountNotZero(possSudoku[i][j]) == 1)
 				{
 					//System.out.println("hoi");
 					count++;
@@ -119,48 +118,52 @@ public class Sudoku
 	 */
 	public boolean checkSolved()
 	{
+		boolean solved = true;
 		//iterate through matrix
 		for(int i = 0; i<9; i++)
 			for(int j = 0; j<9;j++)
 				if(countAmountNotZero(possSudoku[i][j])!=1)
-					return false;
+					solved = false;
 		//every cell has a single value, so return true
-		return true;
+		return solved;
 	}
 	
 	
 	//check if a cell contains value i
 	public boolean checkCellHasValue(int[] cell, int value)
 	{
+		boolean hasValue = false;
 		//iterate through cell
 		for(int i=0; i<cell.length; i++)
 		{
 			//if value found in cell,stop, return true
 			if(cell[i]==value)
-				return true;
+				hasValue = true;
 		}
 		//value not found in cell, return false
-		return false;
+		return hasValue;
 	}
 	//if cell has only single value remaining return value, else return zero
 	public int getValue(int[] cell)
 	{
+		int value = 0;
 		//if cell has only one nonzero value
 		if(countAmountNotZero(cell) == 1)
 		{
 			int i = 0;
+			
 			//iterate through cell, when value found return this value
 			while(i<cell.length)
 			{
 				if(cell[i] != 0)
 				{
-					return cell[i];
+					value = cell[i];
 				}
 				i++;
 			}			
 		}
 		//else return zero
-		return 0;
+		return value;
 	}
 	
 	//set Cell to certain value
@@ -277,7 +280,6 @@ public class Sudoku
 			}
 		}
 	}
-	
 	
 	//if cell still has value x in it, delete x from cell
 	public void deleteValue(int cell[],int value)
@@ -475,62 +477,92 @@ public class Sudoku
 		return startCoord;
 	}
 	
-	public boolean valueOnSingleRowQuad(int q, int value)
+	/*
+	 *  This method checks if a value only appears in one row or column.
+	 *  It returns the row or column number on which this value appears
+	 *  If the value doesn't appear in a single row or column or is already
+	 *  filled in
+	 */
+	public int valueOnSingleRowOrColumnOfQuadrant(int q, int value, String rowOrColumn)
 	{
 		//count how many times the value appears in every row
 		int countArray[] = new int[3];
 		
 		//iterate through quadrant
-		for(int i = q2c(q)[0]; i< q2c(q)[0]+3; i++)
+		for(int i = q2c(q)[0]; i < q2c(q)[0] + 3; i++)
 		{
-			for(int j = q2c(q)[1]; j< q2c(q)[1]+3; j++)
+			for(int j = q2c(q)[1]; j < q2c(q)[1] + 3; j++)
 			{
 				if(checkCellHasValue(possSudoku[i][j], value) &&
-						countAmountNotZero(possSudoku[i][j])!=1)
-					countArray[i-q2c(q)[0]]++;
-			}
-		}
-		for(int i:countArray)
-			System.out.println(countArray[i]);
-		return true;
-	}
-	
-	
-	public void updateLockedCandidates1()
-	{
-		for(int q = 0; q<9; q++)
-		{
-			///row wise
-			for(int i=q2c(q)[0]; i< q2c(q)[1]+3; i++)
-			{
-				//for every possible value
-				for(int v=1; v<=9; v++)
+						countAmountNotZero(possSudoku[i][j]) != 1)
 				{
-					if( (checkCellHasValue(possSudoku[i][q2c(q)[1]],v) && countAmountNotZero(possSudoku[i][q2c(q)[1]])!=1 )
-					||(checkCellHasValue(possSudoku[i][q2c(q)[1]+1],v) && countAmountNotZero(possSudoku[i][q2c(q)[1]+1])!=1 )
-					||(checkCellHasValue(possSudoku[i][q2c(q)[1]+2],v) && countAmountNotZero(possSudoku[i][q2c(q)[1]+2])!=1 ) )
+					if(rowOrColumn.equals("row"))
 					{
-						//for
+						countArray[i-q2c(q)[0]]++;
+					} else if(rowOrColumn.equals("column"))
+					{
+						countArray[j-q2c(q)[1]]++;
 					}
 				}
 			}
 		}
-		/*
-		 * 			for i =row 0:2
-		 * 				
-		 * 				
-		 * 		
-		 * 		
-		 * 		
-		 * 		
-		 * 		
-		 * 		
-		 * 		
-		 * 		
-		 */
+		int returnValue;
+		
+		//check if a value appears only in a single row or column
+		if(countArray[0] != 0 && countArray[1] == 0 && countArray[2] == 0)
+		{
+			returnValue = 0;
+		} else if(countArray[0] == 0 && countArray[1] != 0 && countArray[2] == 0)
+		{
+			returnValue = 1;
+		} else if(countArray[0] == 0 && countArray[1] == 0 && countArray[2] != 1)
+		{
+			returnValue = 2;
+		} else //not a single value found
+		{
+			returnValue = -1;
+		}
+		
+		// add row or column index of upper left corner of quadrant q
+		if(returnValue != -1 && rowOrColumn.equals("row"))
+		{
+			returnValue += returnValue + q2c(q)[0];
+		} else if(returnValue != -1 && rowOrColumn.equals("column"))
+		{
+			returnValue += returnValue + q2c(q)[1];
+		}
+		
+		return returnValue;
+	}
+	
+	public void updateLockedCandidatesRow(int value, int q)
+	{
+		int row = valueOnSingleRowOrColumnOfQuadrant(q, value, "row");
+		
+		if(row != -1)
+		{
+			deleteValueFromRow(row, value, q);
+		}
+	}
+	
+	public void deleteValueFromRow(int row, int value, int q)
+	{
+		//walk through row
+		for(int j = 0; j < 9; j++)
+		{
+			//if not in quadrant q
+			if(j<q2c(q)[1] || j > q2c(q)[1] + 2)
+			{
+				//delete value q from cell
+				deleteValue(possSudoku[row][j],value);
+			}
+		}
+		
+		
 		
 		
 	}
+	
 	public void updateLockedCandidates2(){}
 
 	/* this method prints sudoku, zeros at cells unknown
