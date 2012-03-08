@@ -9,11 +9,11 @@ public class Sudoku
 	{
 		readSudoku();
 		makeNew();
-		for(int i=0;i<9;i++)
+		for(int i = 0; i < 9; i++)
 		{
-			for(int j=0;j<9;j++)
+			for(int j = 0; j < 9; j++)
 			{
-				if(startSudoku[i][j]!=0)
+				if(startSudoku[i][j] != 0)
 				{
 					setValue(possSudoku[i][j],startSudoku[i][j]);
 				}
@@ -42,8 +42,10 @@ public class Sudoku
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			
-			for(int i = 0; i < 9; i++){
-				for(int j = 0; j < 9; j++){
+			for(int i = 0; i < 9; i++)
+			{
+				for(int j = 0; j < 9; j++)
+				{
 					startSudoku[i][j] = br.read() - 48;
 				}
 			}
@@ -51,7 +53,6 @@ public class Sudoku
 		}catch(Exception e){
 			System.out.printf("Error: " + e.getMessage());
 		}
-	
 	}
 	
 	
@@ -76,6 +77,7 @@ public class Sudoku
 			//use hidden single tactic
 			sudoku.updateHiddenSingle();
 			
+			sudoku.updateLockedCandidates2();
 			//use other tactics
 			//not implemented yet!
 			stop++;
@@ -86,9 +88,9 @@ public class Sudoku
 	
 	public double percentageSolved()
 	{
-		int count =0;
+		int count = 0;
 		//iterate through 9x9 matrix
-		for(int i=0;i<9;i++)
+		for(int i = 0; i < 9; i++)
 		{
 			for(int j = 0; j < 9; j++)
 			{
@@ -100,7 +102,7 @@ public class Sudoku
 			}
 		}
 		
-		return 100*count/81.0;
+		return 100 * count / 81.0;
 	}
 	// count how many nonzero-values a single cell has
 	// i.e. how many possibilities has this cell at this moment
@@ -110,10 +112,10 @@ public class Sudoku
 		int count = 0;
 		
 		//iterate trough cell
-		for(int i= 0; i<array.length; i++)
+		for(int i = 0; i < array.length; i++)
 		{
 			//if nonzero value found, increment cout
-			if(array[i]!=0)
+			if(array[i] != 0)
 				count++;
 		}
 		return count;
@@ -128,9 +130,9 @@ public class Sudoku
 	{
 		boolean solved = true;
 		//iterate through matrix
-		for(int i = 0; i<9; i++)
-			for(int j = 0; j<9;j++)
-				if(countAmountNotZero(possSudoku[i][j])!=1)
+		for(int i = 0; i < 9; i++)
+			for(int j = 0; j < 9; j++)
+				if(countAmountNotZero(possSudoku[i][j]) != 1)
 					solved = false;
 		//every cell has a single value, so return true
 		return solved;
@@ -142,10 +144,10 @@ public class Sudoku
 	{
 		boolean hasValue = false;
 		//iterate through cell
-		for(int i=0; i<cell.length; i++)
+		for(int i = 0; i < cell.length; i++)
 		{
 			//if value found in cell,stop, return true
-			if(cell[i]==value)
+			if(cell[i] == value)
 				hasValue = true;
 		}
 		//value not found in cell, return false
@@ -161,7 +163,7 @@ public class Sudoku
 			int i = 0;
 			
 			//iterate through cell, when value found return this value
-			while(i<cell.length)
+			while(i < cell.length)
 			{
 				if(cell[i] != 0)
 				{
@@ -178,10 +180,10 @@ public class Sudoku
 	public void setValue(int[] cell, int value)
 	{
 		//iterate through cell
-		for(int i =0; i<cell.length; i++)
+		for(int i = 0; i < cell.length; i++)
 		{
 			//set al remaining values other then 'value' to zero
-			if(cell[i]!=value)
+			if(cell[i] != value)
 				cell[i] = 0;
 		}
 	}
@@ -194,18 +196,18 @@ public class Sudoku
 	public void updateSingle()
 	{
 		//iterate through sudoku, (9x9)
-		for(int i=0; i<9; i++)
+		for(int i = 0; i < 9; i++)
 		{
-			for(int j=0; j<9; j++)
+			for(int j = 0; j < 9; j++)
 			{
 				//first check if cell is not already filled in, to save time
-				if(getValue(possSudoku[i][j])==0)
+				if(getValue(possSudoku[i][j]) == 0)
 				{
 					//update cell(i,j)
-					updateSingleCell(i,j);
+					updateSingleCell(i, j);
 					
 					//if cell is now filled in print it
-					if(getValue(possSudoku[i][j]) !=0)
+					if(getValue(possSudoku[i][j]) != 0)
 					{
 						System.out.printf(printChange("Single            "
 								, i, j, getValue(possSudoku[i][j])));
@@ -220,26 +222,26 @@ public class Sudoku
 	 */
 	public void updateSingleCell(int row, int col)
 	{
-		updateSingleRow(row,col);
-		updateSingleColumn(row,col);
-		updateSingleQuad(row,col);
+		updateSingleRow(row, col);
+		updateSingleColumn(row, col);
+		updateSingleQuad(row, col);
 	}
 	
 	// update cell,by looking which values are already filled in,in same column
 	public void updateSingleColumn(int row, int col)
 	{
 		//iterate through rows of a column
-		for(int i = 0; i<9; i++)
+		for(int i = 0; i < 9; i++)
 		{
 			//don't compare cell with itself (because this is useless
 			//check if cell has only one value/ is filled in
-			if(i != row && getValue(possSudoku[i][col])!=0)
+			if(i != row && getValue(possSudoku[i][col]) != 0)
 			{
 				//check if the cell to be updated, still has this value
-				if(checkCellHasValue(possSudoku[row][col],getValue(possSudoku[i][col])))
+				if(checkCellHasValue(possSudoku[row][col], getValue(possSudoku[i][col])))
 				{	
 					//if so, delete this value from this cell
-					deleteValue(possSudoku[row][col],getValue(possSudoku[i][col]));
+					deleteValue(possSudoku[row][col], getValue(possSudoku[i][col]));
 				}
 			}
 		}
@@ -249,17 +251,17 @@ public class Sudoku
 	public void updateSingleRow(int row, int col)
 	{
 		///iterate through columns of a row
-		for(int j= 0; j<9; j++)
+		for(int j = 0; j < 9; j++)
 		{
 			//don't compare cell with itself (because this is useless
 			//check if cell has only one value/ is filled in
-			if(j != col && getValue(possSudoku[row][j])!=0)
+			if(j != col && getValue(possSudoku[row][j]) != 0)
 			{
 				//check if the cell to be updated, still has this value
-				if(checkCellHasValue(possSudoku[row][col],getValue(possSudoku[row][j])))
+				if(checkCellHasValue(possSudoku[row][col], getValue(possSudoku[row][j])))
 				{
 					//if so, delete this value from this cell					
-					deleteValue(possSudoku[row][col],getValue(possSudoku[row][j]));
+					deleteValue(possSudoku[row][col], getValue(possSudoku[row][j]));
 				}
 			}
 		}
@@ -269,20 +271,20 @@ public class Sudoku
 	public void updateSingleQuad(int row, int col)
 	{
 		//for row's in same quadrant
-		for(int i= 3 * (row/3); i< 3* ((row/3)+1);i++)
+		for(int i = 3 * (row / 3); i< 3 * ((row / 3) + 1); i++)
 		{
 			//for columns in same quadrant
-			for(int j= 3 * (col/3); j< 3* ((col/3)+1);j++)
+			for(int j = 3 * (col / 3); j < 3 * ((col / 3) + 1); j++)
 			{
 				// don't compare cell with itself &&
 				// check if cell has only one value/is filled in
-				if(!(i == row && j == col) && getValue(possSudoku[i][j])!=0)
+				if(!(i == row && j == col) && getValue(possSudoku[i][j]) != 0)
 				{
 					//check if cell(row,col), still has this value
-					if(checkCellHasValue(possSudoku[row][col],getValue(possSudoku[i][j])))
+					if(checkCellHasValue(possSudoku[row][col], getValue(possSudoku[i][j])))
 					{
 						//if so delete this value from cell
-						deleteValue(possSudoku[row][col],getValue(possSudoku[i][j]));
+						deleteValue(possSudoku[row][col], getValue(possSudoku[i][j]));
 					}
 				}	
 			}
@@ -290,7 +292,7 @@ public class Sudoku
 	}
 	
 	//if cell still has value x in it, delete x from cell
-	public void deleteValue(int cell[],int value)
+	public void deleteValue(int cell[], int value)
 	{
 			//value will be in cell[value-1]
 			//because first place of cell is cell[0]
