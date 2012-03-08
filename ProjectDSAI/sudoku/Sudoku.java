@@ -54,9 +54,13 @@ public class Sudoku
 		//create new sudoku, a 9x9 matrix, with in every cell, the number 1-9
 		//then fill in the known-in-advance numbers
 		Sudoku sudoku = new Sudoku();
+		
+		//init max number of iterations to solve sudoku
 		int stop = 0;
-		//while sudoku is not solved, use different tactics to search for solutions
-		while(!sudoku.checkSolved() && stop < 10)
+		
+		//while sudoku is not solved and not in eternal loop
+		// use different tactics to search for solutions
+		while(!sudoku.checkSolved() && stop < 1000)
 		{
 			System.out.printf(sudoku.toString());
 			sudoku.updateSingle();
@@ -69,11 +73,17 @@ public class Sudoku
 		System.out.print(sudoku.toString2());
 	}
 	
+	/*
+	 * This method returns the percentage of the cell of the sudoku
+	 * which are filled in
+	 */
 	public double percentageSolved()
 	{
-		int count =0;
+		//init counter
+		int count = 0;
+		
 		//iterate through 9x9 matrix
-		for(int i=0;i<9;i++)
+		for(int i = 0; i < 9; i++)
 		{
 			for(int j = 0; j < 9; j++)
 			{
@@ -83,60 +93,79 @@ public class Sudoku
 				}
 			}
 		}
-		
-		return 100*count/81.0;
+		return 100 * count / 81.0;
 	}
-	// count how many nonzero-values a single cell has
-	// i.e. how many possibilities has this cell at this moment
+	
+	/*
+	 * count how many nonzero-values a single cell has
+	 * i.e. how many possibilities has this cell at this moment
+	 */
 	public int countAmountNotZero(int[] array)
 	{
 		//init count
 		int count = 0;
 		
 		//iterate trough cell
-		for(int i= 0; i<array.length; i++)
+		for(int i = 0; i < array.length; i++)
 		{
-			//if nonzero value found, increment cout
-			if(array[i]!=0)
+			//if nonzero value found, increment count
+			if(array[i] != 0)
 				count++;
 		}
 		return count;
 	}
 	
+	/*
+	 * This method checks if a 1x9 array has all ones
+	 */
 	public boolean checkAllOne(int array[])
 	{
-		for(int i =0; i<array.length; i++)
+		boolean allOne = true;
+		//Iterate through array
+		for(int i = 0; i < array.length; i++)
+		{
+			//set returnvalue to false if not 1 found
 			if(array[i] != 1)
-				return false;
-		return true;
+			{
+				allOne = false;
+			}
+		}
+		return allOne;
 	}
-	
-	
-	 /* check if the sudoku is filled in completely
-	 * warning: this doesn't mean it correctly filled in
-	 * maybe new method for this has to be written,
-	 * which checks if every column row, quadrant has 1-9
+
+	/* 
+	 * *************************************************************************
+	 * *************************************************************************
+	 * This method checks if the sudoku is filled in completely and correct
+	 * *************************************************************************
+	 * *************************************************************************
 	 */
 	public boolean checkSolved()
 	{
+		//set returnValue to true
 		boolean solved = true;
-		//iterate through matrix
-		//check that every cell has a single value
-		for(int i = 0; i<9; i++)
-			for(int j = 0; j<9;j++)
-				if(countAmountNotZero(possSudoku[i][j])!=1)
-					solved = false;
 		
-		int countArray[] = new int[9];
-		//check for every row that each number appears one time
-		for(int i = 0; i<9; i++)
+		//iterate through matrix, check that every cell has a single value
+		for(int i = 0; i < 9; i++)
+		{
+			for(int j = 0; j < 9; j++)
+			{
+				if(countAmountNotZero(possSudoku[i][j]) != 1)
+				{
+					solved = false;
+				}
+			}
+		}
+		
+		//check for every column, row and quadrant that each number appears one time
+		for(int i = 0; i < 9; i ++)
 		{
 			if(checkColumnSolved(i) == false)
 			{
 				solved = false;
 			}
 			
-			if(checkRowsSolved(i) == false)
+			if(checkRowSolved(i) == false)
 			{
 				solved = false;
 			}
@@ -145,115 +174,178 @@ public class Sudoku
 			{
 				solved = false;
 			}
-		}		
+		}
+		
 		return solved;
 	}
 	
-	public boolean checkColumnSolved(int i)
+	public boolean checkColumnSolved(int j)
 	{
+		//init count array
 		int countArray[] = new int[9];
-		for(int j = 0; j<9; j++)
+		
+		//iterate through column j
+		for(int i = 0; i < 9; i++)
+		{
+			//if cell is filled in
 			if(countAmountNotZero(possSudoku[i][j]) == 1)
-				countArray[getValue(possSudoku[i][j])-1]++;
+			{
+				//increment countArray on place(value of cell -1)
+				countArray[getValue(possSudoku[i][j]) - 1]++;
+			}
+		}
+		
+		//return true if countArray has only ones
 		return checkAllOne(countArray);
 	}
 	
-	public boolean checkRowsSolved(int j)
+	public boolean checkRowSolved(int i)
 	{
+		//init count Array
 		int countArray[] = new int[9];
-		for(int i = 0; i<9; i++)
+		
+		//iterate through row i
+		for(int j = 0; j < 9; j++)
+		{
+			//if cell is filled in
 			if(countAmountNotZero(possSudoku[i][j]) == 1)
-				countArray[getValue(possSudoku[i][j])-1]++;
+			{
+				//increment countArray on place(value of cell -1)
+				countArray[getValue(possSudoku[i][j]) - 1]++;
+			}
+		}
+		
+		//return true if countArray has only ones
 		return checkAllOne(countArray);
 	}
 	
 	public boolean checkQuadsSolved(int q)
 	{
+		//init countArray
 		int countArray[] = new int[9];
-		for(int i = q2c(q)[0]; i<q2c(q)[0]+3; i++)
+		
+		//iterate through quadrants
+		for(int i = q2c(q)[0]; i < q2c(q)[0] + 3; i++)
 		{
-			for(int j = q2c(q)[1]; j<q2c(q)[1]+3; j++)
+			for(int j = q2c(q)[1]; j < q2c(q)[1] + 3; j++)
 			{
+				//if cell is filled in
 				if(countAmountNotZero(possSudoku[i][j]) == 1)
-					countArray[getValue(possSudoku[i][j])-1]++;
+				{
+					//increment countArray on place(value of cell -1)
+					countArray[getValue(possSudoku[i][j]) - 1]++;
+				}
 			}
 		}
+		
+		//return true if countArray has only ones
 		return checkAllOne(countArray);
 	}
+
+	/* 
+	 * *************************************************************************
+	 * *************************************************************************
+	 * The following methods perform operations on a single cell, or return
+	 * certain values, depending on the values of a cell
+	 * *************************************************************************
+	 * *************************************************************************
+	 */
 	
-	
-	
-	
-	
-	//check if a cell contains value i
+	/*
+	 * This method checks if a value has a certain value
+	 */
 	public boolean checkCellHasValue(int[] cell, int value)
 	{
+		//set returnValue to false
 		boolean hasValue = false;
+		
 		//iterate through cell
-		for(int i=0; i<cell.length; i++)
+		for(int i = 0; i < cell.length; i++)
 		{
-			//if value found in cell,stop, return true
-			if(cell[i]==value)
+			//if value found in cell, set returnValue to true
+			if(cell[i] == value)
+			{
 				hasValue = true;
+			}
 		}
-		//value not found in cell, return false
+		
+		//return returnValue, if not found, hasValue remained false
 		return hasValue;
 	}
-	//if cell has only single value remaining return value, else return zero
+	
+	/*
+	 * This method returns the value of a cell, if it has only single value remaining
+	 * Else return zero
+	 */
 	public int getValue(int[] cell)
 	{
-		int value = 0;
+		//init returnValue
+		int returnValue = 0;
 		//if cell has only one nonzero value
 		if(countAmountNotZero(cell) == 1)
 		{
 			int i = 0;
 			
-			//iterate through cell, when value found return this value
+			//iterate through cell,if value found set returnValue to this value
 			while(i<cell.length)
 			{
 				if(cell[i] != 0)
 				{
-					value = cell[i];
+					returnValue = cell[i];
 				}
+				
 				i++;
 			}			
 		}
-		//else return zero
-		return value;
+		
+		//return value, if not a value found, returnValue remained zero
+		return returnValue;
 	}
 	
-	//set Cell to certain value
+	/*
+	 * This method sets a Cell to  a certain value In other words, it deletes
+	 * all the values that are in the cell, except for this certain value
+	 */
 	public void setValue(int[] cell, int value)
 	{
 		//iterate through cell
-		for(int i =0; i<cell.length; i++)
+		for(int i = 0; i < cell.length; i++)
 		{
 			//set al remaining values other then 'value' to zero
-			if(cell[i]!=value)
+			if(cell[i] != value)
+			{
 				cell[i] = 0;
+			}
 		}
 	}
 	
-	/* the single tactics, looks at the cells which are filled in.
-	 * if cell is x, then all the cells in the same column, row, or
-	 * quad, can't be this value, so delete this values on the right
+	/* 
+	 * *************************************************************************
+	 * *************************************************************************
+	 * The following methods perform the single tactics on the sudoku.
+	 * the single tactics looks at the cells which are filled in.
+	 * if cell is value x, then all the cells in the same column, row, or
+	 * quad, can't be this value x, so deletes this values on the right
 	 * places of the possSudoku.
-	 */	
+	 * *************************************************************************
+	 * *************************************************************************
+	 */
 	public void updateSingle()
 	{
 		//iterate through sudoku, (9x9)
-		for(int i=0; i<9; i++)
+		for(int i = 0; i < 9; i ++)
 		{
-			for(int j=0; j<9; j++)
+			for(int j = 0; j < 9; j++)
 			{
-				//first check if cell is not already filled in, to save time
-				if(getValue(possSudoku[i][j])==0)
+				// Check if cell is not already filled in
+				if(getValue(possSudoku[i][j]) == 0)
 				{
-					//update cell(i,j)
+					// if not filled in yet, look if there 
+					// are values which can be deleted 
 					updateSingleCell(i,j);
 					
-					//if cell is now filled in print it
-					if(getValue(possSudoku[i][j]) !=0)
+					// if cell is now filled in print it
+					if(getValue(possSudoku[i][j]) != 0)
 					{
 						System.out.printf(printChange("Single            "
 								, i, j, getValue(possSudoku[i][j]), "filled in"));
@@ -265,6 +357,7 @@ public class Sudoku
 	
 	/* a given cell, look what values are in same column,
 	 * row or quadrant and delete these values from this cell
+	 * if they are still in cell
 	 */
 	public void updateSingleCell(int row, int col)
 	{
