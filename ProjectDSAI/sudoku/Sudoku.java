@@ -71,7 +71,7 @@ public class Sudoku
 		
 		//while sudoku is not solved and not in eternal loop
 		// use different tactics to search for solutions
-		while(!sudoku.checkSolved() && stop < 1000)
+		while(!sudoku.checkSolved() && stop < 82)
 		{
 			System.out.printf(sudoku.toString());
 			sudoku.updateSingle();
@@ -92,9 +92,7 @@ public class Sudoku
 	public double percentageSolved()
 	{
 		int count = 0;
-		//init counter
-		int count = 0;
-		
+		//init counter		
 		//iterate through 9x9 matrix
 		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
@@ -159,11 +157,7 @@ public class Sudoku
 	{
 		//set returnValue to true
 		boolean solved = true;
-		//iterate through matrix
-		for(int i = 0; i < 9; i++)
-			for(int j = 0; j < 9; j++)
-				if(countAmountNotZero(possSudoku[i][j]) != 1)
-		
+
 		//iterate through matrix, check that every cell has a single value
 		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
