@@ -43,7 +43,7 @@ public class Sudoku
 	
 	public void readSudoku(){
 		try{
-			FileInputStream fstream = new FileInputStream("sudoku.txt");
+			FileInputStream fstream = new FileInputStream("C:\\Users\\petervantzand\\ds\\ProjectDSAI\\ProjectDSAI\\sudoku\\sudoku.txt");
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			
@@ -71,17 +71,29 @@ public class Sudoku
 		
 		//while sudoku is not solved and not in eternal loop
 		// use different tactics to search for solutions
-		while(!sudoku.checkSolved() && stop < 1000)
+		int stopvalue = 81;
+		while(!sudoku.checkSolved() && stop < stopvalue)
 		{
+			int[][][] temp = sudoku.possSudoku;
 			System.out.printf(sudoku.toString());
 			sudoku.updateSingle();
 			sudoku.updateHiddenSingle();
 					
 			sudoku.updateLockedCandidates1();
 			sudoku.updateLockedCandidates2();
+			if(sudoku.possSudoku == temp)
+			{
+				stop = stopvalue;
+			}
 			stop++;
 		}
-		System.out.println("\nSudoku opgelost!\n");
+		if(sudoku.checkSolved())
+		{
+			System.out.println("\nSudoku opgelost, resultaat:\n");
+		} else
+		{
+			System.out.println("\nSudoku niet opgelost, tot hier gekomen:\n");
+		}
 		System.out.print(sudoku.toString2());
 	}
 	
@@ -93,7 +105,7 @@ public class Sudoku
 	{
 		int count = 0;
 		//init counter
-		int count = 0;
+		//int count = 0;
 		
 		//iterate through 9x9 matrix
 		for(int i = 0; i < SUDOKU_LENGTH; i++)
@@ -160,10 +172,7 @@ public class Sudoku
 		//set returnValue to true
 		boolean solved = true;
 		//iterate through matrix
-		for(int i = 0; i < 9; i++)
-			for(int j = 0; j < 9; j++)
-				if(countAmountNotZero(possSudoku[i][j]) != 1)
-		
+	
 		//iterate through matrix, check that every cell has a single value
 		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
