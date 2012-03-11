@@ -24,8 +24,8 @@ public class Sudoku
 				}
 			}
 		}
-	}                                     
-	
+	}
+
 	//create new sudoku (9x9)array, each cell can have value 1-9
 	public void makeNew()
 	{
@@ -71,17 +71,29 @@ public class Sudoku
 		
 		//while sudoku is not solved and not in eternal loop
 		// use different tactics to search for solutions
-		while(!sudoku.checkSolved() && stop < 82)
+		int stopvalue = 100;
+		while(!sudoku.checkSolved() && stop < stopvalue)
 		{
+			int[][][] temp = sudoku.possSudoku;
 			System.out.printf(sudoku.toString());
 			sudoku.updateSingle();
 			sudoku.updateHiddenSingle();
 					
 			sudoku.updateLockedCandidates1();
 			sudoku.updateLockedCandidates2();
+			if(sudoku.possSudoku == temp)
+			{
+				stop = stopvalue;
+			}
 			stop++;
 		}
-		System.out.println("\nSudoku opgelost!\n");
+		if(sudoku.checkSolved())
+		{
+			System.out.println("\nSudoku opgelost, resultaat:\n");
+		} else
+		{
+			System.out.println("\nSudoku niet opgelost, tot hier gekomen:\n");
+		}
 		System.out.print(sudoku.toString2());
 	}
 	
@@ -92,7 +104,7 @@ public class Sudoku
 	public double percentageSolved()
 	{
 		int count = 0;
-		//init counter		
+
 		//iterate through 9x9 matrix
 		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
