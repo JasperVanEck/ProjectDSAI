@@ -1,0 +1,6 @@
+Algoritme = eindige rij instructies waarvoor geen intelligentie nodig is.
+Complexiteit algoritmen
+Big-Oh notation
+	-Upper bounds van running time of geheugen
+	-Om te zeggen hoelangzaam code kan runnen als input groeit
+
