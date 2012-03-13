@@ -8,7 +8,7 @@ public class Sudoku
 	static final int SUDOKU_LENGTH = 9;
 	static final int QUAD_LENGTH = 3;
 	static final int LENGTH_PRINT_LINE = 39;
-	
+
 	public Sudoku()
 	{
 		readSudoku();
@@ -24,7 +24,7 @@ public class Sudoku
 				}
 			}
 		}
-	}
+	}                                     
 
 	//create new sudoku (9x9)array, each cell can have value 1-9
 	public void makeNew()
@@ -40,13 +40,13 @@ public class Sudoku
 			}
 		}
 	}
-	
+
 	public void readSudoku(){
 		try{
-			FileInputStream fstream = new FileInputStream("sudoku.txt");
+			FileInputStream fstream = new FileInputStream("C:\\Users\\petervantzand\\Desktop\\studie\\ioop\\sudoku\\src\\sudoku.txt");
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			
+
 			for(int i = 0; i < 9; i++)
 			{
 				for(int j = 0; j < 9; j++)
@@ -59,66 +59,98 @@ public class Sudoku
 			System.out.printf("Error: " + e.getMessage());
 		}
 	}
+
 	
+
+	
+public void solveSudokuUsingTactics()
+{
+	int stop = 0;
+	double percSolved = percentageSolved();
+	//while sudoku is not solved and not in eternal loop
+	// use different tactics to search for solutions
+	int stopvalue = 81;
+	while(!checkSolved() && stop < stopvalue)
+	{
+		int[][][] temp = possSudoku;
+		System.out.printf(toString());
+		updateSingle();
+		updateHiddenSingle();
+
+		updateLockedCandidates1();
+		updateLockedCandidates2();
+		if(percentageSolved() == percSolved)
+		{
+			stop = stopvalue;
+		}
+		stop++;
+	}
+	if(checkSolved())
+	{
+		System.out.println("\nSudoku opgelost, resultaat:\n");
+	} else
+	{
+		System.out.println("\nSudoku niet opgelost, tot hier gekomen:\n");
+	}
+	System.out.print(toString2());
+}
 	
 	public static void main(String[] args)
 	{
 		//create new sudoku, a 9x9 matrix, with in every cell, the number 1-9
 		//then fill in the known-in-advance numbers
 		Sudoku sudoku = new Sudoku();
+		sudoku.updateSingle();
+		System.out.println(sudoku.toString());
+		sudoku.solveSudokuUsingTactics();
 		
-		int stop = 0;
-		
-		//while sudoku is not solved and not in eternal loop
-		// use different tactics to search for solutions
-		int stopvalue = 100;
-		while(!sudoku.checkSolved() && stop < stopvalue)
-		{
-			int[][][] temp = sudoku.possSudoku;
-			System.out.printf(sudoku.toString());
-			sudoku.updateSingle();
-			sudoku.updateHiddenSingle();
-					
-			sudoku.updateLockedCandidates1();
-			sudoku.updateLockedCandidates2();
-			if(sudoku.possSudoku == temp)
-			{
-				stop = stopvalue;
-			}
-			stop++;
-		}
-		if(sudoku.checkSolved())
-		{
-			System.out.println("\nSudoku opgelost, resultaat:\n");
-		} else
-		{
-			System.out.println("\nSudoku niet opgelost, tot hier gekomen:\n");
-		}
-		System.out.print(sudoku.toString2());
 	}
-	
+
 	/*
 	 * This method returns the percentage of the cell of the sudoku
 	 * which are filled in
 	 */
+	public int[] numberPossSudoku()
+	{
+		int minimum = 100;
+		int coord[] = new int[3];
+		
+		for(int i = 0; i < SUDOKU_LENGTH; i++ )
+		{
+			for(int j = 0; j < SUDOKU_LENGTH; j++ )
+			{
+				
+				if(countAmountNotZero(possSudoku[i][j]) < minimum  && countAmountNotZero(possSudoku[i][j]) > 1)
+				{
+					minimum = countAmountNotZero(possSudoku[i][j]);
+					coord[0] = i;
+					coord[1] = j;
+					coord[2] = minimum;
+				}
+			}
+		}
+		
+		return coord;
+	}
+	
+	
 	public double percentageSolved()
 	{
 		int count = 0;
-
+			
 		//iterate through 9x9 matrix
 		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
 			for(int j = 0; j < SUDOKU_LENGTH; j++)
 			{
-				if( countAmountNotZero(possSudoku[i][j]) == 1)
-				{
-					count++;
-				}
+				count += countAmountNotZero(possSudoku[i][j]);
+				
 			}
 		}
-		return 100 * count / 81.0;
+		double totalAmount = 9 * 9 * 9 - 9 * 9;
+		return 100* (1 -   (count-81) / totalAmount);
 	}
-	
+
 	/*
 	 * count how many nonzero-values a single cell has
 	 * i.e. how many possibilities has this cell at this moment
@@ -127,7 +159,7 @@ public class Sudoku
 	{
 		//init count
 		int count = 0;
-		
+
 		//iterate trough cell
 		for(int i = 0; i < array.length; i++)
 		{
@@ -139,7 +171,7 @@ public class Sudoku
 		}
 		return count;
 	}
-	
+
 	/*
 	 * This method checks if a 1x9 array has all ones
 	 */
@@ -169,6 +201,7 @@ public class Sudoku
 	{
 		//set returnValue to true
 		boolean solved = true;
+		//iterate through matrix
 
 		//iterate through matrix, check that every cell has a single value
 		for(int i = 0; i < SUDOKU_LENGTH; i++)
@@ -181,7 +214,7 @@ public class Sudoku
 				}
 			}
 		}
-		
+
 		//check for every column, row and quadrant that each number appears one time
 		for(int i = 0; i < SUDOKU_LENGTH; i ++)
 		{
@@ -189,26 +222,26 @@ public class Sudoku
 			{
 				solved = false;
 			}
-			
+
 			if(checkRowSolved(i) == false)
 			{
 				solved = false;
 			}
-			
+
 			if(checkQuadsSolved(i) == false)
 			{
 				solved = false;
 			}
 		}
-		
+
 		return solved;
 	}
-	
+
 	public boolean checkColumnSolved(int j)
 	{
 		//init count array
 		int countArray[] = new int[SUDOKU_LENGTH];
-		
+
 		//iterate through column j
 		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
@@ -219,16 +252,16 @@ public class Sudoku
 				countArray[getValue(possSudoku[i][j]) - 1]++;
 			}
 		}
-		
+
 		//return true if countArray has only ones
 		return checkAllOne(countArray);
 	}
-	
+
 	public boolean checkRowSolved(int i)
 	{
 		//init count Array
 		int countArray[] = new int[SUDOKU_LENGTH];
-		
+
 		//iterate through row i
 		for(int j = 0; j < SUDOKU_LENGTH; j++)
 		{
@@ -239,16 +272,16 @@ public class Sudoku
 				countArray[getValue(possSudoku[i][j]) - 1]++;
 			}
 		}
-		
+
 		//return true if countArray has only ones
 		return checkAllOne(countArray);
 	}
-	
+
 	public boolean checkQuadsSolved(int q)
 	{
 		//init countArray
 		int countArray[] = new int[SUDOKU_LENGTH];
-		
+
 		//iterate through quadrants
 		for(int i = q2c(q)[0]; i < q2c(q)[0] + QUAD_LENGTH; i++)
 		{
@@ -262,7 +295,7 @@ public class Sudoku
 				}
 			}
 		}
-		
+
 		//return true if countArray has only ones
 		return checkAllOne(countArray);
 	}
@@ -275,7 +308,7 @@ public class Sudoku
 	 * *************************************************************************
 	 * *************************************************************************
 	 */
-	
+
 	/*
 	 * This method checks if a value has a certain value
 	 */
@@ -283,7 +316,7 @@ public class Sudoku
 	{
 		//set returnValue to false
 		boolean hasValue = false;
-		
+
 		//iterate through cell
 		for(int i = 0; i < cell.length; i++)
 		{
@@ -295,11 +328,11 @@ public class Sudoku
 				hasValue = true;
 			}
 		}
-		
+
 		//return returnValue, if not found, hasValue remained false
 		return hasValue;
 	}
-	
+
 	/*
 	 * This method returns the value of a cell, if it has only single value remaining
 	 * Else return zero
@@ -312,7 +345,7 @@ public class Sudoku
 		if(countAmountNotZero(cell) == 1)
 		{
 			int i = 0;
-			
+
 			//iterate through cell, when value found return this value
 			while(i < cell.length)
 
@@ -321,15 +354,15 @@ public class Sudoku
 				{
 					returnValue = cell[i];
 				}
-				
+
 				i++;
 			}			
 		}
-		
+
 		//return value, if not a value found, returnValue remained zero
 		return returnValue;
 	}
-	
+
 	/*
 	 * This method sets a Cell to  a certain value In other words, it deletes
 	 * all the values that are in the cell, except for this certain value
@@ -346,7 +379,7 @@ public class Sudoku
 			}
 		}
 	}
-	
+
 	/* 
 	 * *************************************************************************
 	 * *************************************************************************
@@ -370,7 +403,7 @@ public class Sudoku
 				{
 					//update cell(i,j)
 					updateSingleCell(i, j);
-					
+
 					//if cell is now filled in print it
 					if(getValue(possSudoku[i][j]) != 0)
 					{
@@ -381,7 +414,7 @@ public class Sudoku
 			}
 		}
 	}
-	
+
 	/* a given cell, look what values are in same column,
 	 * row or quadrant and delete these values from this cell
 	 * if they are still in cell
@@ -392,7 +425,7 @@ public class Sudoku
 		updateSingleColumn(row, col);
 		updateSingleQuad(row, col);
 	}
-	
+
 	// update cell,by looking which values are already filled in,in same column
 	public void updateSingleColumn(int row, int col)
 	{
@@ -412,7 +445,7 @@ public class Sudoku
 			}
 		}
 	}
-	
+
 	// update cell, by looking which values are already filled in, in same row
 	public void updateSingleRow(int row, int col)
 	{
@@ -432,7 +465,7 @@ public class Sudoku
 			}
 		}
 	}
-	
+
 	// update cell, by looking which values are already filled in, in same quad
 	public void updateSingleQuad(int row, int col)
 	{
@@ -456,7 +489,7 @@ public class Sudoku
 			}
 		}
 	}
-	
+
 	//if cell still has value x in it, delete x from cell
 	public void deleteValue(int cell[], int value)
 	{
@@ -467,7 +500,7 @@ public class Sudoku
 				cell[value-1] = 0;
 			}
 	}
-	
+
 	/* Hidden Single Tactic:
 	 * if in a column, row, or quadrant a value is not filled
 	 * in yet, but is only found in one particular cell (so
@@ -484,7 +517,7 @@ public class Sudoku
 			updateHiddenSingleQuad(i);
 		}	
 	}
-		
+
 	/*this method looks for hidden singles in column j
 	 *if found, delete other values in cell which has 
 	 *hidden single value in it.
@@ -498,7 +531,7 @@ public class Sudoku
 		 * found, you know where this hidden singles were found
 		 */
 		int[][] countArray = new int[SUDOKU_LENGTH][3];
-	
+
 		//iterate through columns
 		for(int i =0; i<SUDOKU_LENGTH; i++)
 		{
@@ -516,7 +549,7 @@ public class Sudoku
 				}
 			}
 		}
-		
+
 		//now count array is filled
 		//iterate through it, to find hidden singles
 		for(int k = 0; k<countArray.length; k++)
@@ -530,7 +563,7 @@ public class Sudoku
 			}
 		}
 	}
-	
+
 	/*
 	 * this method looks for hidden singles in row i
 	 * if found, delete other values in cell which has 
@@ -545,7 +578,7 @@ public class Sudoku
 		 * singles found, you know where this hidden singles was found
 		 */
 		int[][] countArray = new int[SUDOKU_LENGTH][3];
-	
+
 		//iterate through rows
 		for(int j =0; j<SUDOKU_LENGTH; j++)
 		{
@@ -563,7 +596,7 @@ public class Sudoku
 				}
 			}
 		}
-		
+
 		//now count array is filled
 		//iterate through it, to find hidden singles	
 		for(int k = 0; k<countArray.length; k++)
@@ -585,7 +618,7 @@ public class Sudoku
 	public void updateHiddenSingleQuad(int q)
 	{
 		int[][] countArray = new int[SUDOKU_LENGTH][3];
-	
+
 		//iterate quadrants
 		for(int i = q2c(q)[0]; i< q2c(q)[0]+QUAD_LENGTH; i++)
 		{
@@ -606,7 +639,7 @@ public class Sudoku
 				}
 			}
 		}
-			
+
 		// count array is filled, iterate through it, to find hidden singles	
 		for(int j = 0; j<countArray.length; j++)
 		{
@@ -622,7 +655,7 @@ public class Sudoku
 			}
 		}
 	}
-	
+
 	/* This method prints the progress & which value is filled in at which cell
 	 */
 	public String printChange(String tactic,int coordI,int coordJ,int changed, String deleteOrFilledIn)
@@ -630,7 +663,7 @@ public class Sudoku
 		return (int)percentageSolved() + "%%,\t" + changed + " " + deleteOrFilledIn + " in cell [" + 
 			coordI + "," + coordJ + "] \t tactic used: " + tactic + "\n";
 	}
-	
+
 	/*Method quadrant to coordinate
 	 *returns a coord as a 2x1 array
 	 *this array is the the coordinate of the upper left corner of quadrant q
@@ -652,7 +685,7 @@ public class Sudoku
 		int[] startCoord = {(q/3)*3,(q%3)*3};
 		return startCoord;
 	}
-	
+
 	/*
 	 *  This method checks if a value only appears in one row or column.
 	 *  It returns the row or column number on which this value appears
@@ -674,8 +707,8 @@ public class Sudoku
 				{
 					returnValue = -1;
 				}
-				
-				
+
+
 				if(checkCellHasValue(possSudoku[i][j], value) &&
 						countAmountNotZero(possSudoku[i][j]) != 1)
 				{
@@ -689,7 +722,7 @@ public class Sudoku
 				}
 			}
 		}
-		
+
 		if(returnValue != -1)
 		{
 			//check if a value appears only in a single row or column
@@ -706,7 +739,7 @@ public class Sudoku
 			{
 				returnValue = -1;
 			}
-			
+
 			// add row or column index of upper left corner of quadrant q
 			if(returnValue != -1 && rowOrColumn.equals("row"))
 			{
@@ -716,11 +749,11 @@ public class Sudoku
 				returnValue += q2c(q)[1];
 			}
 		}
-		
-		
+
+
 		return returnValue;
 	}
-	
+
 	public void updateLockedCandidates1()
 	{
 		for(int value = 1; value<=SUDOKU_LENGTH; value++)
@@ -731,8 +764,8 @@ public class Sudoku
 			}
 		}
 	}
-	
-	
+
+
 	public void updateLockedCandidatesValQ(int value, int q)
 	{
 		int row = valueOnSingleRowOrColumnOfQuadrant(q, value, "row");
@@ -741,18 +774,18 @@ public class Sudoku
 		if(row != -1)
 		{
 			//System.out.println("2q: "+ q + ",val: " + value +" "+ valueOnSingleRowOrColumnOfQuadrant(q, value, "row"));
-			
+
 			deleteValueFromRow(row, value, q);
-			
+
 		}
-		
+
 		int column = valueOnSingleRowOrColumnOfQuadrant(q, value, "column");
 		if(column != -1)
 		{
 			deleteValueFromColumn(column,value,q);
 		}
 	}
-	
+
 	public void deleteValueFromRow(int row, int value, int q)
 	{
 		//walk through row
@@ -771,7 +804,7 @@ public class Sudoku
 			}
 		}
 	}
-	
+
 	public void deleteValueFromColumn(int column, int value, int q)
 	{
 		//walk through column
@@ -786,12 +819,12 @@ public class Sudoku
 			}
 		}
 	}
-	
-	
+
+
 	public void updateLockedCandidates2()
 	{
 		//for all rows r 
-		
+
 		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
 			//for all values v
@@ -800,7 +833,7 @@ public class Sudoku
 				//method who gives the quadrant q on which a value v appears in a
 				//certain row r, and doesn't appear in this row r  in the other quadrants (!=q)
 				int q = rowValuesOnlyInQuad(i,v);
-				
+
 				//delete this value v from the quadrant q, except for row r
 				if(q!= -1)
 				{
@@ -808,7 +841,7 @@ public class Sudoku
 				}
 			}
 		}	
-		
+
 		//for all columns c
 		for(int j = 1; j < SUDOKU_LENGTH; j++)
 		{
@@ -818,7 +851,7 @@ public class Sudoku
 				//method who gives the quadrant q on which a value v appears in a
 				//certain column c, and doesn't appear in this column c in the other quadrants (!=q)
 				int q = columnValuesOnlyInQuad(j,v);
-			 
+
 				//delete this value from the quadrant, except for column c
 				if(q!=-1)
 				{
@@ -827,7 +860,7 @@ public class Sudoku
 			}
 		}	
 	}
-	
+
 	public void deleteValueFromQuadrantExceptRowOrColumn(int q, int index, int value, String rowOrColumn)
 	{
 		//iterate through quadrant
@@ -850,7 +883,7 @@ public class Sudoku
 			}
 		}
 	}
-	
+
 	public int columnValuesOnlyInQuad(int c, int value)
 	{
 		//countArray counts for every cell in column if it how many times it appears in
@@ -867,7 +900,7 @@ public class Sudoku
 				countArray[r/3]++;
 			}
 		}
-		
+
 		if(returnValue != -1)
 		{
 			if(countArray[0] !=0 && countArray[1] == 0 && countArray[2] == 0)
@@ -886,14 +919,14 @@ public class Sudoku
 		}
 		return returnValue;
 	}
-	
+
 	public int rowValuesOnlyInQuad(int r, int value)
 	{
 		//countArray counts for every cell in row if it how many times it appears in
 		//this row,
 		int returnValue = 0;
 		int countArray[] = new int[QUAD_LENGTH];
-		
+
 		//walk through columns of row
 		for(int c = 0; c < SUDOKU_LENGTH; c++)
 		{
@@ -905,7 +938,7 @@ public class Sudoku
 				countArray[c/3]++;
 			}
 		}
-		
+
 		if(returnValue != -1)
 		{
 			if(countArray[0] !=0 && countArray[1] == 0 && countArray[2] == 0)
@@ -924,14 +957,14 @@ public class Sudoku
 		}
 		return returnValue;
 	}
-	
-	
-	
+
+
+
 	public int  c2q(int r, int c)
 	{
 		return (r/3)*3 + c/3;
 	}
-	
+
 
 	/* this method prints sudoku, zeros at cells unknown
 	 * else print value
@@ -956,7 +989,7 @@ public class Sudoku
 		}
 		return output;
 	}
-	
+
 	/*
 	 * this method prints sudoku, at each cell, print(non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -965,9 +998,9 @@ public class Sudoku
 	 */
 	public String toString()
 	{
-		
+
 		String output = "";
-		
+
 		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
 			if(i % 3 == 0 && i != 0 && i != SUDOKU_LENGTH)
@@ -986,13 +1019,13 @@ public class Sudoku
 					output = output + "  ";
 				output = output + "\n";
 			}
-			
+
 			for(int j = 0; j < SUDOKU_LENGTH; j++)
 			{
 				output = output + "  "; 
 				if(j % 3 == 0 && j != 0 && j != SUDOKU_LENGTH)
 					output = output +"  "; 
-				
+
 				if(getValue(possSudoku[i][j]) != 0)
 					output = output + "   ";
 				else 
@@ -1018,7 +1051,7 @@ public class Sudoku
 				output = output + "  "; 
 				if(j % 3 == 0 && j != 0 && j != SUDOKU_LENGTH)
 					output = output + "  "; 
-				
+
 				if(getValue(possSudoku[i][j]) != 0)
 					output = output + "   ";
 				else
