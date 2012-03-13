@@ -1,0 +1,11 @@
+De te volgen stappen om ons programma te testen:
+Compile het java document: javac Sudoku.java
+Zet een reeks van 81 getallen in het document sudoku.txt.
+Of meerdere reeks, zorg wel dat ze onder elkaar staan. De eerste
+zal worden uitgelezen. Na de 81 getallen is het mogelijk om wat
+klein commentaar erbij te schrijven, zodat je kan herkennen welke
+sudoku welke is.
+Hier na kan je de code zonder argumenten runnen: java Sudoku
+
+That's all folks!
+
