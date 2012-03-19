@@ -1,35 +1,37 @@
 import java.io.*;
 import java.util.Scanner;
 
-public class SudokuBC
+public class Sudoku
 {
 	private int[][][] possSudoku = new int[9][9][9];
 	private int[][] startSudoku = new int[9][9];
-
 	private int[][] sudoku = new int[9][9];
+
 	static final int SUDOKU_LENGTH = 9;
 	static final int QUAD_LENGTH = 3;
 	static final int LENGTH_PRINT_LINE = 39;
 
-	public SudokuBC()
+	private int timesGuessed = 0;
+	
+	public Sudoku()
 	{
 		readSudoku();
 		sudokuTo3d(sudoku);
 
-		for(int i=0;i<SUDOKU_LENGTH;i++)
+		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
-			for(int j=0;j<SUDOKU_LENGTH;j++)
+			for(int j = 0; j < SUDOKU_LENGTH; j++)
 			{
 				if(startSudoku[i][j] != 0)
 				{
-					setValue(possSudoku[i][j],startSudoku[i][j]);
+					setValue(i, j, startSudoku[i][j]);
 				}
 			}
 		}
 	}                                     
 
 	//create new sudoku (9x9)array, each cell can have value 1-9
-	public void sudokuTo3d(int [][] sudoku)
+	public int[][][] sudokuTo3d(int [][] sudoku)
 	{
 		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
@@ -42,79 +44,119 @@ public class SudokuBC
 			}
 		}
 		
-		for(int i=0;i<SUDOKU_LENGTH;i++)
+		for(int i = 0; i < SUDOKU_LENGTH; i++)
+		{
+			for(int j = 0; j < SUDOKU_LENGTH; j++)
 			{
-				for(int j=0;j<SUDOKU_LENGTH;j++)
+				if(sudoku[i][j] != 0)
 				{
-					if(sudoku[i][j] != 0)
-					{
-						setValue(possSudoku[i][j],sudoku[i][j]);
-					}
+					setValue(i, j, sudoku[i][j]);
 				}
 			}
-		    
-		
-		
+		}    
+		return possSudoku;
 	}
 	
-	
-
-	public int[][] readSudoku(){
-		try{
-			FileInputStream fstream = new FileInputStream("sudoku.txt");
+	public int[][] readSudoku()
+	{
+		try
+		{
+			FileInputStream fstream = new FileInputStream("C:\\Users\\petervantzand\\Desktop\\studie\\ioop\\sudoku\\src\\sudoku.txt");
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 
-			for(int i = 0; i < 9; i++)
+			for(int i = 0; i < SUDOKU_LENGTH; i++)
 			{
-				for(int j = 0; j < 9; j++)
+				for(int j = 0; j < SUDOKU_LENGTH; j++)
 				{
 					sudoku[i][j] = br.read() - 48;
 				}
 			}
 			in.close();
 			//return sudoku;
-		}catch(Exception e){
+		}
+		catch(Exception e)
+		{
 			System.out.printf("Error: " + e.getMessage());
 		}
 		return sudoku;
 	}
 
-public boolean mogelijkheden(int i, int j, int mogelijkheid, int[][] sudoku){
-		
-		
-		
-		for(int k = 0; k <=8; ++k){
-			if(mogelijkheid == sudoku[i][k])
+	public int[] bestCell(int[][] sudoku)
+	{
+		int minimum = 100;
+		int coord[] = new int[3];
+		for(int i = 0; i < SUDOKU_LENGTH; i++)
+		{
+			for(int j = 0; j < SUDOKU_LENGTH; j++)
+			{
+				int pos = 0;
+				if(sudoku[i][j] == 0)
+				{
+					for(int k = 0; k < SUDOKU_LENGTH; k++)
+					{
+						if(isPossible(i, j, k, sudoku))
+						{
+							pos++;
+						}	
+					}
+				}
+				
+				if(pos < minimum && pos > 1)
+				{
+					minimum = pos;
+					coord[0] = i;
+					coord[1] = j;
+					coord[2] = minimum;
+				}
+			}
+		}
+		return coord;
+	}
+	
+	public boolean isPossible(int i, int j, int possNum, int[][] sudoku)
+	{
+		for(int k = 0; k < SUDOKU_LENGTH; k++)
+		{
+			if(possNum == sudoku[i][k])
+			{
 				return false;
+			}
 		}
 		
-		for(int k = 0; k <=8; ++k){
-			if(mogelijkheid == sudoku[k][j])
-			return false;
+		for(int k = 0; k < SUDOKU_LENGTH; k++)
+		{
+			if(possNum == sudoku[k][j])
+			{
+				return false;
+			}
 		}
 		
 		 int rijKwadrant = (i / 3) * 3;
 		 int kolomKwadrant = (j / 3) * 3;
 		 
-		 for(int m = 0; m < 3; ++m){
-			 
-			 for(int k = 0; k < 3; ++k){
-				if(mogelijkheid == sudoku[rijKwadrant + m][kolomKwadrant + k]) 
-				return false;
+		 for(int m = 0; m < QUAD_LENGTH; ++m)
+		 {
+			 for(int k = 0; k < QUAD_LENGTH; k++){
+				if(possNum == sudoku[rijKwadrant + m][kolomKwadrant + k])
+				{ 
+					return false;
+				}
 			 }
 		 }
 		return true;
 	}
 	
-	public boolean sudVol()
+	public boolean sudVol(int[][] sudoku)
 	{
-		for(int i=0; i< 9; i++)
+		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
-			for(int j=0; j< 9; j++)
+			for(int j = 0; j < SUDOKU_LENGTH; j++)
 			{
-				if(sudoku[i][j] ==0)
+				if(sudoku[i][j] == 0)
+				{
 					return false;
+				}
 			}
 		}
 		return true;
@@ -122,60 +164,69 @@ public boolean mogelijkheden(int i, int j, int mogelijkheid, int[][] sudoku){
 
 	public int percentageSolved2d(int[][] sudoku)
 	{
-		int count =0;
-		for(int i=0; i< 9; i++)
+		int count = 0;
+		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
-			for(int j=0; j< 9; j++)
+			for(int j = 0; j < SUDOKU_LENGTH; j++)
 			{
-				if(sudoku[i][j] !=0)
+				if(sudoku[i][j] != 0)
+				{
 					count++;
+				}
 			}
 		}
 		return (int) (100*count/81.0);
 	}
 
-	public boolean losOp(int i, int j, int[][] sudoku)
+	public int[][] tactics(int[][] sudoku)
 	{
-		
-		if (i ==9)
-		{
-			i = 0;
-			//j++;
-			if (++j == 9)
-			{
-				this.sudoku = sudoku;
-				//System.out.println(toString());
-				return true;
-				
-			}
-		}
-	
-		/*
 		sudokuTo3d(sudoku);
 		solveSudokuUsingTactics();
-		sudoku = updateTo2d();
-		
+		return updateTo2d();
+	}
+	
+	public boolean solveSudoku(int i, int j, int[][] sudoku)
+	{
 		if(!checkNotConflicting(sudoku))
 		{
 			return false;
 		}
-		*/
-		if (sudoku[i][j] != 0)
-			return losOp(i+1,j,sudoku);
 		
-		for( int k =1 ; k<= 9; ++k)
+		if(sudVol(sudoku) && checkNotConflicting(sudoku))
 		{
-			
-			if(mogelijkheden(i,j,k,sudoku))
+			this.sudoku = sudoku;
+			System.out.println(toString());
+			return true;
+		}
+
+		sudoku  = tactics(sudoku);
+		
+		if (sudoku[i][j] != 0)
+		{
+			int coords2[] = bestCell(sudoku);
+			return solveSudoku(coords2[0], coords2[1], sudoku);
+		}
+		
+		for(int k = 1; k <= SUDOKU_LENGTH; k++)
+		{
+			if(isPossible(i, j, k, sudoku))
 			{
 				sudoku[i][j] = k;
-				System.out.println(percentageSolved2d(sudoku));
-				///System.out.printf(printChange("Guessed, #Poss: "
-				//		, i, j, k, "filled in") );
+				System.out.println(toString());
+				timesGuessed++;
+				System.out.println();
+				System.out.println(percentageSolved2d(sudoku) + "%, \t" + k + 
+						" filled in in cell [" + i + "," + j + "]\t tactic used: Guessed");
+				System.out.println();
 				
+				//check which cell has the least values
+				int coords[] = bestCell(sudoku);
 				
-				if (losOp(i+1,j, sudoku))
-				return true;
+				//try to solve with best cell as next to fill in
+				if (solveSudoku(coords[0], coords[1], sudoku))
+				{	
+					return true;
+				}
 			}
 		}
 		
@@ -183,121 +234,51 @@ public boolean mogelijkheden(int i, int j, int mogelijkheid, int[][] sudoku){
 		
 		return false;
 	}	
-	
-public boolean solveSudoku()
-{	
-	int coords[] = numberPossSudoku();
-	int changeBack[][][] = possSudoku;
-	System.out.println(changeBack[0][0][0]);
-	if(coords[2] !=1 || coords[2] != 100)
-	{
-	for(int k=1; k<=9; k++)
-	{
-		if(checkCellHasValue(possSudoku[coords[0]][coords[1]],k))
-		{
-			//updateSingle();
-		//	solveSudokuUsingTactics();
-			if(checkSolved())
-			{
-				System.out.println("opgelost1");
-				return true;
-			}
-				
-			if(coords[2] != 0 )
-			{
-				setValue(possSudoku[coords[0]][coords[1]],k);
-				System.out.println(printChange("Guessed, #Poss: "
-					, coords[0], coords[1], k, "filled in") + coords[2]);
-			}
-			
-			if(solveSudoku())
-			{
-				System.out.println("opgelost2");
-				return true;
-			}
-		}
-	}
-	possSudoku = changeBack;
-	}
-	
-	return false;
-}
-	
-public void solveSudokuUsingTactics()
-{
-	int stop = 0;
-	double percSolved = percentageSolved();
-	//while sudoku is not solved and not in eternal loop
-	// use different tactics to search for solutions
-	int stopvalue = 81;
-	while(!checkSolved() && stop < stopvalue)
-	{
-		//int[][][] temp = possSudoku;
-		//System.out.printf(toString());
-		updateSingle();
-		updateHiddenSingle();
 
-		updateLockedCandidates1();
-	updateLockedCandidates2();
-		if(percentageSolved() == percSolved)
+	public void solveSudokuUsingTactics()
+	{
+		int stop = 0;
+		double percSolved = percentageSolved();
+		//while sudoku is not solved and not in eternal loop
+		// use different tactics to search for solutions
+		int stopvalue = 81;
+		while(stop < stopvalue)
 		{
-			stop = stopvalue;
+			updateSingle();
+			updateHiddenSingle();
+			updateLockedCandidates1();
+			updateLockedCandidates2();
+
+			if(percentageSolved() == percSolved)
+			{
+				stop = stopvalue;
+			}
+			stop++;
 		}
-		stop++;
 	}
-	if(checkSolved())
-	{
-	//	System.out.println("\nSudoku opgelost, resultaat:\n");
-	} else
-	{
-		//System.out.println("\nSudoku niet opgelost, tot hier gekomen:\n");
-	}
-	//System.out.print(toString());
-	//System.out.println("***");
-}
-	
+
 	public static void main(String[] args)
 	{
 		//create new sudoku, a 9x9 matrix, with in every cell, the number 1-9
 		//then fill in the known-in-advance numbers
-		SudokuBC test = new SudokuBC();
-		test.sudokuTo3d(test.sudoku);
+		System.out.println("Sudoku oplossen");
+		Sudoku test = new Sudoku();
+
+		int coords[] = test.bestCell(test.sudoku);
 		
-	test.solveSudokuUsingTactics();
-	
-	/*
-	int[][] s = 	{
-			{9,0,0,2,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0},
-			{0,4,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0},
-			{0,1,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,4,0,0},
-			{0,0,0,0,0,0,0,8,0},
-			{0,0,0,0,0,0,0,0,0}			
-					};
-	int[] row = {1,0,2,1,1,1};
-	System.out.println(test.checkNotConflicting(s));
-	*/
-	//test.solveSudokuUsingTactics();
-	
-	//test.solveSudokuUsingTactics();
-	//	test.updateTo2d();
-		//System.out.println(test.toString3());//
-		//System.out.println(test.toString());
-		test.updateTo2d();
-		test.losOp(0,0,test.sudoku);
-		System.out.print(test);
 		
+		if(test.solveSudoku(coords[0], coords[1], test.sudoku));
+		{
+			System.out.println("Sudoku opgelost, aantal keer gebacktracked: " + test.timesGuessed);
+		}
 	}
 	
 	public int[][] updateTo2d()
 	{
 		int sudoku[][] = new int[9][9];
-		for(int i=0;i<SUDOKU_LENGTH;i++)
+		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
-			for(int j=0;j<SUDOKU_LENGTH;j++)
+			for(int j = 0; j < SUDOKU_LENGTH; j++)
 			{
 				if(countAmountNotZero(possSudoku[i][j]) == 1)
 				{
@@ -308,27 +289,6 @@ public void solveSudokuUsingTactics()
 		return sudoku;
 	}
 	
-	public String toString(){
-		
-		String output = "";	
-			
-			for(int i = 0; i <=8; i++){
-				
-				for(int j = 0; j <= 8; j++)
-				{					
-					output = String.format(output + sudoku[i][j] + "|");
-					if (j==8)
-						output = output + "\n";
-				}
-				output = String.format(output + "------------------\n");
-			}
-			
-			return output;
-		}
-	/*
-	 * This method returns the percentage of the cell of the sudoku
-	 * which are filled in
-	 */
 	public int[] numberPossSudoku()
 	{
 		int minimum = 100;
@@ -339,7 +299,9 @@ public void solveSudokuUsingTactics()
 			for(int j = 0; j < SUDOKU_LENGTH; j++ )
 			{
 				
-				if(countAmountNotZero(possSudoku[i][j]) < minimum  && countAmountNotZero(possSudoku[i][j]) != 0 && countAmountNotZero(possSudoku[i][j]) != 1)
+				if(countAmountNotZero(possSudoku[i][j]) < minimum  
+				&& countAmountNotZero(possSudoku[i][j]) != 0 
+				&& countAmountNotZero(possSudoku[i][j]) != 1)
 				{
 					minimum = countAmountNotZero(possSudoku[i][j]);
 					coord[0] = i;
@@ -348,14 +310,17 @@ public void solveSudokuUsingTactics()
 				}
 			}
 		}
-		if(minimum ==0)
+
+		if(minimum == 0)
 		{
 			System.out.println("er gaat iets fout");
 		}
 		return coord;
 	}
-	
-	
+	/*
+	 * This method returns the percentage of the cell of the sudoku
+	 * which are filled in
+	 */
 	public double percentageSolved()
 	{
 		int count = 0;
@@ -372,9 +337,7 @@ public void solveSudokuUsingTactics()
 				
 			}
 		}
-		//double totalAmount = 9 * 9 * 9 - 9 * 9;
-		//return 100* (1 -   (count-81) / totalAmount);
-		return 100*count/81;
+		return 100 * count / 81;
 	}
 
 	/*
@@ -401,21 +364,6 @@ public void solveSudokuUsingTactics()
 	/*
 	 * This method checks if a 1x9 array has all ones
 	 */
-	public boolean checkAllOne(int array[])
-	{
-		boolean allOne = true;
-		//Iterate through array
-		for(int i = 0; i < array.length; i++)
-		{
-			//set returnvalue to false if not 1 found
-			if(array[i] != 1)
-			{
-				allOne = false;
-			}
-		}
-		return allOne;
-	}
-	
 	public boolean checkNoDoubles(int array[])
 	{
 		for(int i = 0; i < array.length; i++)
@@ -429,7 +377,6 @@ public void solveSudokuUsingTactics()
 		return true;
 	}
 	
-
 	/* 
 	 * *************************************************************************
 	 * *************************************************************************
@@ -439,19 +386,19 @@ public void solveSudokuUsingTactics()
 	 */
 	public boolean checkNotConflicting(int[][] sudoku)
 	{
-		for(int i = 0; i < 9; i++)
+		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
-			if(	!checkRowNoDoubles(sudoku, i))
+			if(!checkRowNoDoubles(sudoku, i))
 			{
 				return false;
 			}
 			
-			if(	!checkColumnNoDoubles(sudoku, i))
+			if(!checkColumnNoDoubles(sudoku, i))
 			{
 				return false;
 			}
 			
-			if(	!checkQuadNoDoubles(sudoku, i))
+			if(!checkQuadNoDoubles(sudoku, i))
 			{
 				return false;
 			}
@@ -459,37 +406,33 @@ public void solveSudokuUsingTactics()
 		return true;
 	}
 	
-	
-	public boolean checkRowNoDoubles(int [][] sudoku, int i)
+	public boolean checkRowNoDoubles(int[][] sudoku, int i)
 	{
 		int countArray[] = new int[9];
-		for(int j = 0; j < 9; j++)
+		for(int j = 0; j < SUDOKU_LENGTH; j++)
 		{
-			if(sudoku[i][j]!=0)
+			if(sudoku[i][j] != 0)
 			{
-				countArray[sudoku[i][j]-1]++;
+				countArray[sudoku[i][j] - 1]++;
 			}
 		}
 		return checkNoDoubles(countArray);
-		//return true;
 	}
 	
-	public boolean checkColumnNoDoubles(int [][] sudoku,int j)
+	public boolean checkColumnNoDoubles(int[][] sudoku, int j)
 	{
 		int countArray[] = new int[9];
-		for(int i = 0; i < 9; i++)
+		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
-			if(sudoku[i][j]!=0)
+			if(sudoku[i][j] != 0)
 			{
-				countArray[sudoku[i][j]-1]++;
+				countArray[sudoku[i][j] - 1]++;
 			}
 		}
 		return checkNoDoubles(countArray);
-
-	
 	}
 	
-	public boolean checkQuadNoDoubles(int [][] sudoku,int q)
+	public boolean checkQuadNoDoubles(int[][] sudoku, int q)
 	{
 		int countArray[] = new int[SUDOKU_LENGTH];
 
@@ -499,120 +442,16 @@ public void solveSudokuUsingTactics()
 			for(int j = q2c(q)[1]; j < q2c(q)[1] + QUAD_LENGTH; j++)
 			{
 				//if cell is filled in
-				if(sudoku[i][j]!=0)
+				if(sudoku[i][j] != 0)
 				{
 					//increment countArray on place(value of cell -1)
-					countArray[sudoku[i][j]-1]++;
+					countArray[sudoku[i][j] - 1]++;
 				}
 			}
 		}
 
 		//return true if countArray has no value 2 or higher in it
 		return checkNoDoubles(countArray);
-	}
-	
-	
-	public boolean checkSolved()
-	{
-		//set returnValue to true
-		boolean solved = true;
-		//iterate through matrix
-
-		//iterate through matrix, check that every cell has a single value
-		for(int i = 0; i < SUDOKU_LENGTH; i++)
-		{
-			for(int j = 0; j < SUDOKU_LENGTH; j++)
-			{
-				if(countAmountNotZero(possSudoku[i][j]) != 1)
-				{
-					solved = false;
-				}
-			}
-		}
-
-		//check for every column, row and quadrant that each number appears one time
-		for(int i = 0; i < SUDOKU_LENGTH; i ++)
-		{
-			if(checkColumnSolved(i) == false)
-			{
-				solved = false;
-			}
-
-			if(checkRowSolved(i) == false)
-			{
-				solved = false;
-			}
-
-			if(checkQuadsSolved(i) == false)
-			{
-				solved = false;
-			}
-		}
-
-		return solved;
-	}
-
-	public boolean checkColumnSolved(int j)
-	{
-		//init count array
-		int countArray[] = new int[SUDOKU_LENGTH];
-
-		//iterate through column j
-		for(int i = 0; i < SUDOKU_LENGTH; i++)
-		{
-			//if cell is filled in
-			if(countAmountNotZero(possSudoku[i][j]) == 1)
-			{
-				//increment countArray on place(value of cell -1)
-				countArray[getValue(possSudoku[i][j]) - 1]++;
-			}
-		}
-
-		//return true if countArray has only ones
-		return checkAllOne(countArray);
-	}
-
-	public boolean checkRowSolved(int i)
-	{
-		//init count Array
-		int countArray[] = new int[SUDOKU_LENGTH];
-
-		//iterate through row i
-		for(int j = 0; j < SUDOKU_LENGTH; j++)
-		{
-			//if cell is filled in
-			if(countAmountNotZero(possSudoku[i][j]) == 1)
-			{
-				//increment countArray on place(value of cell -1)
-				countArray[getValue(possSudoku[i][j]) - 1]++;
-			}
-		}
-
-		//return true if countArray has only ones
-		return checkAllOne(countArray);
-	}
-
-	public boolean checkQuadsSolved(int q)
-	{
-		//init countArray
-		int countArray[] = new int[SUDOKU_LENGTH];
-
-		//iterate through quadrants
-		for(int i = q2c(q)[0]; i < q2c(q)[0] + QUAD_LENGTH; i++)
-		{
-			for(int j = q2c(q)[1]; j < q2c(q)[1] + QUAD_LENGTH; j++)
-			{
-				//if cell is filled in
-				if(countAmountNotZero(possSudoku[i][j]) == 1)
-				{
-					//increment countArray on place(value of cell -1)
-					countArray[getValue(possSudoku[i][j]) - 1]++;
-				}
-			}
-		}
-
-		//return true if countArray has only ones
-		return checkAllOne(countArray);
 	}
 
 	/* 
@@ -635,8 +474,6 @@ public void solveSudokuUsingTactics()
 		//iterate through cell
 		for(int i = 0; i < cell.length; i++)
 		{
-			//if value found in cell,stop, return true
-			if(cell[i] == value)
 			//if value found in cell, set returnValue to true
 			if(cell[i] == value)
 			{
@@ -663,13 +500,11 @@ public void solveSudokuUsingTactics()
 
 			//iterate through cell, when value found return this value
 			while(i < cell.length)
-
 			{
 				if(cell[i] != 0)
 				{
 					returnValue = cell[i];
 				}
-
 				i++;
 			}			
 		}
@@ -682,20 +517,20 @@ public void solveSudokuUsingTactics()
 	 * This method sets a Cell to  a certain value In other words, it deletes
 	 * all the values that are in the cell, except for this certain value
 	 */
-	public void setValue(int[] cell, int value)
+	public void setValue(int i, int j, int value)
 	{
 		
 		//iterate through cell
 		if(value != 0)
 		{
-		for(int i = 0; i < cell.length; i++)
-		{
-			//set al remaining values other then 'value' to zero
-			if(cell[i] != value )
+			for(int k = 0; k < SUDOKU_LENGTH; k++)
 			{
-				cell[i] = 0;
+				//set al remaining values other then 'value' to zero
+				if(possSudoku[i][j][k] != value )
+				{
+					possSudoku[i][j][k] = 0;
+				}
 			}
-		}
 		}
 	}
 
@@ -789,7 +624,7 @@ public void solveSudokuUsingTactics()
 	public void updateSingleQuad(int row, int col)
 	{
 		//for row's in same quadrant
-		for(int i = 3 * (row / 3); i< 3 * ((row / 3) + 1); i++)
+		for(int i = 3 * (row / 3); i < 3 * ((row / 3) + 1); i++)
 		{
 			//for columns in same quadrant
 			for(int j = 3 * (col / 3); j < 3 * ((col / 3) + 1); j++)
@@ -812,24 +647,10 @@ public void solveSudokuUsingTactics()
 	//if cell still has value x in it, delete x from cell
 	public void deleteValue(int cell[], int value)
 	{
-			//value will be in cell[value-1]
-			//because first place of cell is cell[0]
-			//if(countAmountNotZero(cell)==1)
-			//{
-				//System.out.println("fout \n fout \n fout");
-			//	//}
-		
-		
-			if(cell[value-1]== value  && countAmountNotZero(cell)!=1)
-			{
-				cell[value-1] = 0;
-			}
-			//System.out.println(toString3());
-		//	Scanner sc = new Scanner(System.in);
-		 //      while(!sc.nextLine().equals(""));
-			
-		       
-			
+		if(cell[value - 1] == value  && countAmountNotZero(cell) != 1)
+		{
+			cell[value - 1] = 0;
+		}
 	}
 
 	/* Hidden Single Tactic:
@@ -841,7 +662,7 @@ public void solveSudokuUsingTactics()
 	public void updateHiddenSingle()
 	{
 		//loop through rows, columns and quadrant, looking for hidden singles
-		for(int i =0; i<SUDOKU_LENGTH; i++)
+		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
 			updateHiddenSingleRow(i);
 			updateHiddenSingleColumn(i);
@@ -864,13 +685,13 @@ public void solveSudokuUsingTactics()
 		int[][] countArray = new int[SUDOKU_LENGTH][3];
 
 		//iterate through columns
-		for(int i =0; i<SUDOKU_LENGTH; i++)
+		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
 			//iterate through cell
-			for(int k = 0; k<SUDOKU_LENGTH; k++)
+			for(int k = 0; k < SUDOKU_LENGTH; k++)
 			{
 				//if nonzero value found
-				if(possSudoku[i][j][k]== k+1)
+				if(possSudoku[i][j][k] == k + 1)
 				{
 					//increment count array on right place
 					countArray[k][0]++;
@@ -883,14 +704,14 @@ public void solveSudokuUsingTactics()
 
 		//now count array is filled
 		//iterate through it, to find hidden singles
-		for(int k = 0; k<countArray.length; k++)
+		for(int k = 0; k < countArray.length; k++)
 		{
 			//if countArray has hidden single && and this cell is not filled in yet
-			if(countArray[k][0]==1 && countAmountNotZero(possSudoku[countArray[k][1]][countArray[k][2]]) !=1)
+			if(countArray[k][0] == 1 && countAmountNotZero(possSudoku[countArray[k][1]][countArray[k][2]]) != 1)
 			{
 				//fill in the cell
-				setValue(possSudoku[countArray[k][1]][countArray[k][2]],k+1);//(countArray[j][0])+1);
-				System.out.printf(printChange("HiddenSingleColumn   ", countArray[k][1], countArray[k][2], k+1, "filled in"));
+				setValue(countArray[k][1], countArray[k][2], k + 1);//(countArray[j][0])+1);
+				System.out.printf(printChange("HiddenSingleColumn   ", countArray[k][1], countArray[k][2], k + 1, "filled in"));
 			}
 		}
 	}
@@ -911,13 +732,13 @@ public void solveSudokuUsingTactics()
 		int[][] countArray = new int[SUDOKU_LENGTH][3];
 
 		//iterate through rows
-		for(int j =0; j<SUDOKU_LENGTH; j++)
+		for(int j = 0; j < SUDOKU_LENGTH; j++)
 		{
 			//iterate through cell
-			for(int k = 0; k<SUDOKU_LENGTH; k++)
+			for(int k = 0; k < SUDOKU_LENGTH; k++)
 			{
 				//if nonzero value found
-				if(possSudoku[i][j][k]== k+1)
+				if(possSudoku[i][j][k] == k + 1)
 				{
 					//increment countArray on right place
 					countArray[k][0]++;
@@ -930,14 +751,14 @@ public void solveSudokuUsingTactics()
 
 		//now count array is filled
 		//iterate through it, to find hidden singles	
-		for(int k = 0; k<countArray.length; k++)
+		for(int k = 0; k < countArray.length; k++)
 		{
 			//if countArray has hidden single && and this cell is not filled in yet
-			if(countArray[k][0]==1 && countAmountNotZero(possSudoku[countArray[k][1]][countArray[k][2]]) !=1)
+			if(countArray[k][0] == 1 && countAmountNotZero(possSudoku[countArray[k][1]][countArray[k][2]]) != 1)
 			{
 				//fill in the cell
-				setValue(possSudoku[countArray[k][1]][countArray[k][2]],k+1);//(countArray[j][0])+1);
-				System.out.printf(printChange("HiddenSingleRow   ", countArray[k][1], countArray[k][2], k+1, "filled in"));
+				setValue(countArray[k][1],countArray[k][2], k + 1);
+				System.out.printf(printChange("HiddenSingleRow   ", countArray[k][1], countArray[k][2], k + 1, "filled in"));
 			}
 		}
 	}
@@ -951,15 +772,15 @@ public void solveSudokuUsingTactics()
 		int[][] countArray = new int[SUDOKU_LENGTH][3];
 
 		//iterate quadrants
-		for(int i = q2c(q)[0]; i< q2c(q)[0]+QUAD_LENGTH; i++)
+		for(int i = q2c(q)[0]; i < q2c(q)[0] + QUAD_LENGTH; i++)
 		{
-			for(int j = q2c(q)[1];j<q2c(q)[1]+QUAD_LENGTH ;j++)
+			for(int j = q2c(q)[1]; j < q2c(q)[1] + QUAD_LENGTH; j++)
 			{
 				//iterate through cell
-				for(int k=0; k<SUDOKU_LENGTH; k++)
+				for(int k = 0; k < SUDOKU_LENGTH; k++)
 				{
 					//if nonzero value found
-					if(possSudoku[i][j][k]== k+1)
+					if(possSudoku[i][j][k] == k + 1)
 					{
 						//increment countArray on right place
 						countArray[k][0]++;
@@ -972,26 +793,25 @@ public void solveSudokuUsingTactics()
 		}
 
 		// count array is filled, iterate through it, to find hidden singles	
-		for(int j = 0; j<countArray.length; j++)
+		for(int j = 0; j < countArray.length; j++)
 		{
 			//if countArray has hidden single && and this cell is not filled in yet
-			if(countArray[j][0]==1 && countAmountNotZero(possSudoku
-					[countArray[j][1]][countArray[j][2]]) !=1)
+			if(countArray[j][0] == 1 && countAmountNotZero(possSudoku
+					[countArray[j][1]][countArray[j][2]]) != 1)
 			{
 				//fill in the cell
-				setValue(possSudoku[countArray[j][1]][countArray[j][2]],j+1);
+				setValue(countArray[j][1], countArray[j][2],j + 1);
 				//print which value is filled in on which coordinate
 				System.out.printf(printChange("HiddenSingleQuad  ", 
-						countArray[j][1], countArray[j][2], j+1, "filled in"));
+						countArray[j][1], countArray[j][2], j + 1, "filled in"));
 			}
 		}
 	}
 
 	/* This method prints the progress & which value is filled in at which cell
 	 */
-	public String printChange(String tactic,int coordI,int coordJ,int changed, String deleteOrFilledIn)
+	public String printChange(String tactic, int coordI, int coordJ, int changed, String deleteOrFilledIn)
 	{
-		//return "";
 		return (int)percentageSolved() + "%%,\t" + changed + " " + deleteOrFilledIn + " in cell [" + 
 			coordI + "," + coordJ + "] \t tactic used: " + tactic + "\n";
 	}
@@ -1014,7 +834,7 @@ public void solveSudokuUsingTactics()
 	public int[] q2c(int q)
 	{
 		//q is a number from 0 to 8
-		int[] startCoord = {(q/3)*3,(q%3)*3};
+		int[] startCoord = {(q / 3) * 3, (q % 3) * 3};
 		return startCoord;
 	}
 
@@ -1097,7 +917,6 @@ public void solveSudokuUsingTactics()
 		}
 	}
 
-
 	public void updateLockedCandidatesValQ(int value, int q)
 	{
 		int row = valueOnSingleRowOrColumnOfQuadrant(q, value, "row");
@@ -1124,7 +943,7 @@ public void solveSudokuUsingTactics()
 		for(int j = 0; j < SUDOKU_LENGTH; j++)
 		{
 			//if not in quadrant q
-			if( ( j<q2c(q)[1] || j > q2c(q)[1] + 2 ) && checkCellHasValue(possSudoku[row][j],value) )
+			if((j < q2c(q)[1] || j > q2c(q)[1] + 2 ) && checkCellHasValue(possSudoku[row][j], value) )
 			{
 				//delete value q from cell
 				//System.out.printf(toString());
@@ -1290,13 +1109,33 @@ public void solveSudokuUsingTactics()
 		return returnValue;
 	}
 
-
-
+	//give a 2-d coordinaat, return the quad the coordinaat is in
 	public int  c2q(int r, int c)
 	{
 		return (r/3)*3 + c/3;
 	}
 
+	public String toString()
+	{
+		String output= "\n";
+		for(int i = 0; i<SUDOKU_LENGTH; i++)
+		{
+			for(int j=0; j<SUDOKU_LENGTH; j++)
+			{
+				if(getValue(possSudoku[i][j]) != 0)
+					output = output + sudoku[i][j];
+				else 
+					output = String.format(output + "0");
+				if((j+1) % 3 == 0)
+					output = output + " ";
+			}
+			output = output + "\n";
+			if( (i + 1) % 3 == 0)
+				output = output + "\n";
+		}
+		return output;
+	}
+	
 
 	/* this method prints sudoku, zeros at cells unknown
 	 * else print value
