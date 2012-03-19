@@ -4,7 +4,8 @@ public class Sudoku
 {
 	public static void main(String[] args)
 	{
-		Board3d board = new Board3d();
+		Board2d board2d = new Board2d();
+		Board3d board = new Board3d(board2d.getSudoku());
 		Tactics tactics = new Tactics();
 		board = tactics.useAllTactics(board);
 		if(board.checkSolved())
@@ -19,7 +20,7 @@ public class Sudoku
 			
 			if(answer.equals("j"))
 			{
-				Board2d board2d = new Board2d(board.updateTo2d());
+				board2d.setSudoku(board.updateTo2d());
 				
 				if(board2d.solveBackTrack(0, 0, board2d.getSudoku()))
 				{
