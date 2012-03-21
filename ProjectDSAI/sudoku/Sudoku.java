@@ -2,6 +2,15 @@ import java.util.Scanner;
 
 public class Sudoku
 {
+	/**
+	 * Initiates the sudoku solving algorithm.
+	 * This method, next to initiating the sudoku solving algorithm, allows
+	 * the user to specify wether, he/she wants to use only the standard
+	 * tactics to solve a sudoku, and also gives the option to use backtracking
+	 * in combination with the tactics. This would allow every sudoku to be solved.
+	 * 
+	 * @param  args The starting arguments are not used.
+	 */
 	public static void main(String[] args)
 	{
 		Board2d board2d = new Board2d();

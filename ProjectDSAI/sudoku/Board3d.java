@@ -6,14 +6,18 @@ import java.io.InputStreamReader;
 
 public class Board3d
 {
+	/**
+	 * The sudoku with all the possibilities for a cell.
+	 */
 	private int [][][] possSudoku = new int[9][9][9];
 	static final int SUDOKU_LENGTH = 9;
 	static final int QUAD_LENGTH = 3;
 	static final int LENGTH_PRINT_LINE = 39;
 	
-	/* default constructor
-	 * with no arguments, read the sudoku from file
-	 * create board object
+	/** 
+	 * Default constructor.
+	 * Takes no arguments, reads the sudoku from file and
+	 * creates the possSudoku.
 	 */
 	public Board3d()
 	{
@@ -21,9 +25,11 @@ public class Board3d
 		readSudoku();
 	}
 	
-	/*
-	 * Sudoku with 2d-sudoku as input, creates board object
-	 * with a given state
+	/**
+	 * Constructor, which takes a 2d sudoku as input.
+	 * Sets the possSudoku, according to the 2d input sudoku.
+	 * 
+	 * @param sudoku A 2d sudoku.
 	 */
 	public Board3d(int[][] sudoku)
 	{
@@ -43,8 +49,9 @@ public class Board3d
 		}	
 	}
 	
-	/*
-	 * This method fills in every cell of the board with 1-9 on cells 0-8 
+	/**
+	 * Fill the possSudoku field.
+	 * This method fills in every cell of the board with 1-9 on cells 0-8.
 	 */
 	public void makeNew()
 	{
@@ -60,8 +67,10 @@ public class Board3d
 		}
 	}
 		
-	/*
-	 * This method read the sudoku from file
+	/**
+	 * This method reads the sudoku from a file.
+	 * This method reads just 81 characters on a single line. So that behind the sudoku,
+	 * it is possible to put some comments about the sudoku being read.
 	 */
 	public void readSudoku()
 	{
@@ -90,15 +99,25 @@ public class Board3d
 		}
 	}
 	
+	/** 
+	 * Returns the 3d sudoku.
+	 * 
+	 * @return The possibility sudoku.
+	 */
 	public int[][][] getSudoku()
 	{
 		return possSudoku;
 	}
 	
 	
-	/*
+	/**
 	 * This method deletes all the values of a cell, except for the given
-	 * parameter value
+	 * parameter value.
+	 * Iterates through a cell to delete all the values except, for the given parameter value.
+	 * 
+	 * @param i The row number of the cell.
+	 * @param j The column number of the cell.
+	 * @param value The value which needs to be set.
 	 */
 	public void setValue(int i, int j, int value)
 	{
@@ -111,92 +130,15 @@ public class Board3d
 			}
 		}
 	}
-	
-	/*
-	 * count how many nonzero-values cell possSudoku(i,j) has
-	 * i.e. how many possibilities has this cell at this moment
-	 */
-	public int countAmountNotZero(int i, int j)
-	{
-		//init count
-		int count = 0;
 
-		//iterate trough cell
-		for(int k = 0; k < SUDOKU_LENGTH; k++)
-		{
-			//if nonzero value found, increment count
-			if(possSudoku[i][j][k] != 0)
-			{
-				count++;
-			}
-		}
-		return count;
-	}
-	
-	/*
-	 * This method counts how many non-zero values a single cell has
-	 * i.e. how many possiblities has this cell at this moment
-	 */
-	public int countAmountNotZero(int[] cell)
-	{
-		//init count
-		int count = 0;
-
-		//iterate trough cell
-		for(int k = 0; k < SUDOKU_LENGTH; k++)
-		{
-			//if nonzero value found, increment count
-			if(cell[k] != 0)
-			{
-				count++;
-			}
-		}
-		return count;
-	}
-	
-	/*
-	 * This method deletes a value from a possSudoku[i][j]
-	 */
-	public void deleteValue(int i, int j, int value)
-	{
-		if(possSudoku[i][j][value - 1] == value && countAmountNotZero(i, j) != 1)
-		{
-			possSudoku[i][j][value - 1] = 0;
-		}	
-	}
-	
-	/*
-	 * This method checks if a cell is filled in, in other words, is there
-	 * only one value remaining in this cell
-	 */
-	public boolean checkCellFilledIn(int i, int j)
-	{
-		boolean filled = false;
-		
-		if(countAmountNotZero(i, j) == 1)
-		{
-			filled = true;
-		}
-		return filled;
-	}
-	
-	/*
-	 * This method checks if a cell is filled in, in other words, is there
-	 * only one value remaining in this cell
-	 */
-	public boolean checkCellFilledIn(int cell[])
-	{
-		boolean filled = false;
-		
-		if(countAmountNotZero(cell) == 1)
-		{
-			filled = true;
-		}
-		return filled;
-	}
-	
-	/*
-	 * Inserts a certain value into a cell.
+	/**
+	 * This method deletes all the values of a cell, except for the given
+	 * parameter value.
+	 * Iterates through a cell to delete all the values except, for the given parameter value.
+	 * 
+	 * @param cell The cell to be set.
+	 * @param value The value which needs to be set.
+	 * @return The cell the value was set in.
 	 */
 	public int[] setValue(int[] cell, int value)
 	{
@@ -215,9 +157,82 @@ public class Board3d
 		}
 		return cell;
 	}
+	/**
+	 * Counts how many non-zero values a cell in the possibility contains.
+	 * Count how many nonzero-values cell possSudoku(i,j) has
+	 * i.e. how many possibilities has this cell at this moment.
+	 * 
+	 * @param i The row number.
+	 * @param j The column number.
+	 * @return The amount of non-zero entries in the specified cell.
+	 */
+	public int countAmountNotZero(int i, int j)
+	{
+		//init count
+		int count = 0;
+
+		//iterate trough cell
+		for(int k = 0; k < SUDOKU_LENGTH; k++)
+		{
+			//if nonzero value found, increment count
+			if(possSudoku[i][j][k] != 0)
+			{
+				count++;
+			}
+		}
+		return count;
+	}
 	
-	/*
-	 * This method deletes a certain value from a certain cell
+	/**
+	 * Counts how many non-zero values a cell in the possibility contains.
+	 * Count how many nonzero-values cell possSudoku(i,j) has
+	 * i.e. how many possibilities has this cell at this moment.
+	 * 
+	 * @param cell The cell with all the possible values.
+	 * @return The amount of non-zero entries in the specified cell.
+	 */
+	public int countAmountNotZero(int[] cell)
+	{
+		//init count
+		int count = 0;
+
+		//iterate trough cell
+		for(int k = 0; k < SUDOKU_LENGTH; k++)
+		{
+			//if nonzero value found, increment count
+			if(cell[k] != 0)
+			{
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	/**
+	 * This method deletes a value from a cell.
+	 * This method deletes the value given, in the cell specified by 
+	 * the row and column nubmer.
+	 * 
+	 * @param i The row number.
+	 * @param j The column number.
+	 * @param value The value to be deleted.
+	 */
+	public void deleteValue(int i, int j, int value)
+	{
+		if(possSudoku[i][j][value - 1] == value && countAmountNotZero(i, j) != 1)
+		{
+			possSudoku[i][j][value - 1] = 0;
+		}
+	}
+
+	/**
+	 * This method deletes a value from a cell.
+	 * This method deletes the value given, in the cell specified by 
+	 * the row and column nubmer.
+	 * 
+	 * @param cell The cell from the value needs to be deleted.
+	 * @param value The value to be deleted.
+	 * @return The cell the value was deleted from.
 	 */
 	public int[] deleteValue(int cell[], int value)
 	{
@@ -227,9 +242,54 @@ public class Board3d
 		}	
 		return cell;
 	}
+
+	/**
+	 * This method checks if a cell is filled in.
+	 * This method checks if a cell is filled in, in other words, is there
+	 * only one value remaining in this cell.
+	 * 
+	 * @param i The row number.
+	 * @param j The column number.
+	 * @return <code>True</code> if it is filled in, <code>false</code> otherwise.
+	 */
+	public boolean checkCellFilledIn(int i, int j)
+	{
+		boolean filled = false;
+		
+		if(countAmountNotZero(i, j) == 1)
+		{
+			filled = true;
+		}
+		return filled;
+	}
 	
-	/*
-	 * This method if a cell still has a certain value
+	/**
+	 * This method checks if a cell is filled in.
+	 * This method checks if a cell is filled in, in other words, is there
+	 * only one value remaining in this cell.
+	 * 
+	 * @param cell The cell to be checked.
+	 * @return <code>True</code> if it is filled in, <code>false</code> otherwise.
+	 */
+	public boolean checkCellFilledIn(int cell[])
+	{
+		boolean filled = false;
+		
+		if(countAmountNotZero(cell) == 1)
+		{
+			filled = true;
+		}
+		return filled;
+	}
+	
+	/**
+	 * This method if a cell still has a certain value.
+	 * Iterating through the cell to check whether a cell still has a value present.
+	 * 
+	 * @param i The row number.
+	 * @param j The column number.
+	 * @param value The value to be checked for.
+	 * @return <code>True</code> if it contains the value, <code>false</code> otherwise.
 	 */
 	public boolean checkCellHasValue(int i, int j, int value)
 	{
@@ -248,8 +308,13 @@ public class Board3d
 		return hasValue;
 	}
 	
-	/*
-	 * This method checks if a value has a certain value
+	/**
+	 * This method if a cell still has a certain value.
+	 * Iterating through the cell to check whether a cell still has a value present.
+	 * 
+	 * @param cell The cell to be checked.
+	 * @param value The value to be checked for.
+	 * @return <code>True</code> if it contains the value, <code>false</code> otherwise.
 	 */
 	public boolean checkCellHasValue(int[] cell, int value)
 	{
@@ -268,6 +333,13 @@ public class Board3d
 		return hasValue;
 	}
 	
+	/**
+	 * Creates a 2d board from the 3d board.
+	 * A 2d board is generated from the 3d board, so it can be used for backtracking.
+	 * As backtracking with a 3d board would be inefficient and very difficult.
+	 * 
+	 * @return The 2d sudoku.
+	 */
 	public int[][] updateTo2d()
 	{
 		int sudoku[][] = new int[9][9];
@@ -286,46 +358,62 @@ public class Board3d
 	}
 	
 	
-	/*
-	 *  This method returns a cell (i,j)
+	/**
+	 *  This method returns a cell.
+	 *  This method returns a cell, specified by the row and column numbers.
+	 *  
+	 *  @param i The row number.
+	 *  @param j The column number.
+	 *  @return The wanted cell.
 	 */
 	public int[] getCell(int i, int j)
 	{
 		return possSudoku[i][j];
 	}
 	
-	/*
-	 * This method sets a Cell
+	/**
+	 * This method sets a Cell.
+	 * With the given row and column number a cell can be inserted into to possibility sudoku.
+	 * 
+	 * @param i The row number.
+	 * @param j The column number.
+	 * @param cell The cell to be inserted.
 	 */
 	public void setCell(int i, int j, int[] cell)
 	{
 		possSudoku[i][j] = cell;
 	}
 	
-	/*
-	 * This method return a whole row;
-	 * This is a 9x9 array[j][k]
-	 * j = the column number
-	 * k = the index of the cell 
+	/**
+	 * Returns a row.
+	 * This method returns the row specified.
+	 * 
+	 * @param i The row number
+	 * @return The row, with the possibilities. 
 	 */
 	public int[][] getRow(int i)
 	{
 		return possSudoku[i];
 	}
 	
-	/*
-	 * This methods sets a row;
+	/**
+	 * Sets a row.
+	 * Fill in a complete row.
+	 * 
+	 * @param i The row number.
+	 * @param row The row with the possibilities.
 	 */
 	public void setRow(int i, int[][] row)
 	{
 		possSudoku[i] = row;
 	}
 	
-	/*
-	 * This method return a whole column;
-	 * This is a 9x9 array[i][k]
-	 * i = the column number
-	 * k = the index of the cell 
+	/**
+	 * Returns a column.
+	 * This method returns the column specified.
+	 * 
+	 * @param j The column number
+	 * @return The column, with the possibilities. 
 	 */
 	public int[][] getColumn(int j)
 	{
@@ -339,8 +427,12 @@ public class Board3d
 		return column;
 	}
 	
-	/*
-	 * This method sets a column 
+	/**
+	 * Sets a column.
+	 * Fill in a complete column.
+	 * 
+	 * @param j The column number.
+	 * @param column The column with the possibilities.
 	 */
 	public void setColumn(int j, int[][] column)
 	{
@@ -350,13 +442,12 @@ public class Board3d
 		}
 	}
 	
-	/*
-	 * This method return a whole quadrant;
-	 * This is a 9x9 array[i][k]
-	 * i = index of the quadrant like this:	0 1 2
-	 * 										3 4 5
-	 * 										6 7 8
-	 * k = the index of the cell 
+	/**
+	 * Returns a quadrant.
+	 * This method returns the quadrant specified.
+	 * 
+	 * @param q The quadrant number
+	 * @return The quadrant with the possibilities. 
 	 */
 	public int[][] getQuad(int q)
 	{
@@ -374,8 +465,12 @@ public class Board3d
 		return quad;
 	}
 	
-	/*
-	 * This method sets a quad
+	/**
+	 * Sets a quadrant.
+	 * Fill in a complete quadrant.
+	 * 
+	 * @param q The quadrant number.
+	 * @param quad The quadrant with the possibilities.
 	 */
 	public void setQuad(int q, int[][] quad)
 	{
@@ -391,18 +486,26 @@ public class Board3d
 	}
 	
 	
-	/*
-	 * This method returns the quadrant the coord (i,j is in
+	/**
+	 * Converts row and column to quadrant.
+	 * This method calculates in which quadrant a cell is located.
 	 * 
+	 * @param i The row number.
+	 * @param j The column number.
+	 * @return The quadrant number.
 	 */
-	public int  coordToQuad(int i, int j)
+	public int coordToQuad(int i, int j)
 	{
 		return (i / 3) * 3 + j / 3;
 	}
 	
-	/*
+	/**
+	 * Returns row-index upper left corner quadrant.
 	 * This method returns the row-index of the upper left corner
-	 * of quadrant q
+	 * of quadrant q.
+	 * 
+	 * @param q The quadrant number.
+	 * @return The row number.
 	 */
 	public int quadToRow(int q)
 	{
@@ -410,9 +513,13 @@ public class Board3d
 		return (q / 3) * 3;
 	}
 	
-	/*
+	/**
+	 * Returns column-index upper left corner quadrant.
 	 * This method returns the column-index of the upper left corner
-	 * of quadrant q
+	 * of quadrant q.
+	 * 
+	 * @param q The quadrant number.
+	 * @return The column number.
 	 */
 	public int quadToCol(int q)
 	{
@@ -420,11 +527,16 @@ public class Board3d
 		return (q % 3) * 3;
 	}
 	
-	/*
+	/**
+	 * Returns the value of a cell.
 	 * This method returns the value of cell (i,j) of pussSudoku,
 	 * if the cell is filled, in other words, if 
 	 * the cell has one non-zero value. If there are more then
 	 * one value remaining return zero.
+	 * 
+	 * @param i The row number.
+	 * @param j The column number.
+	 * @return The value of the cell.
 	 */
 	public int getValue(int i, int j)
 	{
@@ -443,15 +555,16 @@ public class Board3d
 		}
 		return value;
 	}
-	
-	
-	
-	
-	/*
+	/**
+	 *  Returns row or column of quadrant in which the number is.
 	 *  This method checks if a value only appears in one row or column.
 	 *  It returns the row or column number on which this value appears
 	 *  If the value doesn't appear in a single row or column or is already
-	 *  filled in
+	 *  filled in.
+	 *  
+	 *  @param q The quadrant number.
+	 *  @param value The value.
+	 *  @param rowOrColumn Specifying whether the value needs to be found from a row or column.
 	 */
 	public int valueOnSingleRowOrColumnOfQuadrant(int q, int value, String rowOrColumn)
 	{
@@ -509,6 +622,12 @@ public class Board3d
 			}	
 	}
 	
+	/**
+	 * Returns percentage solved.
+	 * Returns the percentage of how much the sudoku is filled in.
+	 * 
+	 * @return The percentage solved.
+	 */
 	public double percentageSolved()
 	{
 		int count = 0;
@@ -525,14 +644,15 @@ public class Board3d
 				
 			}
 		}
-		//double totalAmount = 9 * 9 * 9 - 9 * 9;
-		//return 100* (1 -   (count-81) / totalAmount);
 		return 100 * count / 81;
 	}
 	
-	/*
+	/**
+	 * Returns whether the sudoku is solved.
 	 * This method checks if the sudoku is solved. Sudoku is solved if on
 	 * every row, column and quadrant every value 1-9 appears one time.
+	 * 
+	 * @return If solved returns <code>true</code>, <code>false</code> if not.
 	 */
 	public boolean checkSolved()
 	{
@@ -549,9 +669,13 @@ public class Board3d
 		return solved;
 	}
 
-	/*
+	/**
+	 * Returns whether an array is filled in properly.
 	 * This method checks if 9x9 array-representation of a row column of quadrant
-	 * is filled in, and ever value appears exactly once
+	 * is filled in, and ever value appears exactly once.
+	 * 
+	 * @param array The row, column or quadrant to be checked.
+	 * @return If filled in return <code>true</code>, <code>false</code> if not.
 	 */
 	public boolean checkArraySolved(int[][] array)
 	{
@@ -575,11 +699,15 @@ public class Board3d
 		//return true if countArray has only ones
 		return checkAllOne(countArray);
 	}
-		
-	/*
-	 * This method checks if a array contains only ones
+
+	/**
+	 * Returns whether cell contains only one.
+	 * This method checks if a cell contains only ones
+	 * 
+	 * @param array The cell to be checked.
+	 * @return If only ones return <code>true</code>, <code>false</code> if not.
 	 */
-	public boolean checkAllOne(int array[])
+	public boolean checkAllOne(int[] array)
 	{
 		boolean allOne = true;
 		//Iterate through array
@@ -594,6 +722,16 @@ public class Board3d
 		return allOne;
 	}
 
+	/**
+	 * Returns the value of a cell.
+	 * This method returns the value of cell of pussSudoku,
+	 * if the cell is filled, in other words, if 
+	 * the cell has one non-zero value. If there are more then
+	 * one value remaining return zero.
+	 * 
+	 * @param cell The cell to be retrieved from.
+	 * @return The value of the cell.
+	 */
 	public int getValue(int[] cell)
 	{
 		int value = 0;
@@ -618,10 +756,12 @@ public class Board3d
 	 ********************************************
 	 */
 	
-	
-	/*
+	/**
+	 * Returns a 2d sudoku.
 	 * This method only prints the cells which are filled in,
 	 * else print a zero
+	 * 
+	 * @return The 2d sudoku string.
 	 */
 	public String toString2()
 	{
@@ -644,11 +784,15 @@ public class Board3d
 		return output;
 	}
 
-	/*
-	 * this method prints the sudoku, a 9 x 9 sudoku
+	/**
+	 * Returns a string with a row, column or quadrant reday for printing.
+	 * This method prints the sudoku, a 9 x 9 sudoku
 	 * at each cell, all the possible values, 
 	 * if one value remaining,
 	 * print only this value in middle of cell.
+	 * 
+	 * @param matrix A row, column or quadrant.
+	 * @return The row, column or quadrant printed.
 	 */
 	public String printRowColumnOrQuad(int[][] matrix )
 	{
@@ -704,8 +848,14 @@ public class Board3d
 		}
 		output = output + "\n";
 		return output;
-	}	
+	}
 
+	/**
+	 * Prints the board in standard format.
+	 * Prints all the possible values of a cell, if there is just one value left, just print that value.
+	 * 
+	 * @return The 3d sudoku in standard format.
+	 */
 	public String toString()
 	{
 		String output = "";

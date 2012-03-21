@@ -1,11 +1,15 @@
 
 public class Tactics extends Board3d
 {
-	/* a given cell, look what values are in same column,
+	/** 
+	 * This method checks for single values.
+	 * A given cell, look what values are in same column,
 	 * row or quadrant and delete these values from this cell
 	 * if they are still in cell
+	 * 
+	 * @param board The 3d board state to be updated.
+	 * @return The updated 3d board state.
 	 */
-	
 	public Board3d singleTactic(Board3d board)
 	{
 		for(int i = 0 ; i < Board3d.SUDOKU_LENGTH; i++)
@@ -17,6 +21,15 @@ public class Tactics extends Board3d
 		return board;
 	}
 	
+	/**
+	 * Updates the sudoku, if there is just a single possibility for a cell.
+	 * Checks a row, column or quadrant for a single value, and then fills it in.
+	 * 
+	 * @param array A row, column or quadrant in which a single might be found.
+	 * @param index The index number of the row, column or quadrant.
+	 * @param type The name of what type is put in, a row, column or quadrant.
+	 * @return The updated row, column or quadrant.
+	 */
 	public int[][] updateSingle(int[][] array, int index, String type)
 	{
 		for(int i = 0; i < Board3d.SUDOKU_LENGTH; i++)
@@ -30,10 +43,10 @@ public class Tactics extends Board3d
 					{
 						array[j] = deleteValue(array[j], deleteVal);
 						
-						if(countAmountNotZero(array[j])==1)
+						if(countAmountNotZero(array[j]) == 1)
 						{
-							System.out.println("Single, " + type + " "+ index + ", " +
-									"index " + j + ": filled in " + getValue(array[j]) );
+							System.out.println("Single, " + type + " " + index + ", " +
+									"index " + j + ": filled in " + getValue(array[j]));
 						}
 					}
 				}
@@ -43,6 +56,13 @@ public class Tactics extends Board3d
 		return array;
 	}
 	
+	/** 
+	 * This method checks for hidden single values.
+	 * Calls the updateHiddenSingle, so it can be checked for every row, column or quadrant.
+	 * 
+	 * @param board The 3d board state to be updated.
+	 * @return The updated 3d board state.
+	 */
 	public Board3d hiddenSingleTactic(Board3d board)
 	{
 		for(int i = 0; i < Board3d.SUDOKU_LENGTH; i++)
@@ -54,6 +74,15 @@ public class Tactics extends Board3d
 		return board;
 	}
 	
+	/**
+	 * Updates the sudoku, if there is just a single hidden possibility for a cell.
+	 * Checks a row, column or quadrant for a hidden single value, and then fills it in.
+	 * 
+	 * @param array  A row, column or quadrant in which a hidden single might be found.
+	 * @param index	   The index number of the row, column or quadrant.
+	 * @param type The name of what type is put in, a row, column or quadrant.
+	 * @return The updated row, column or quadrant.
+	 */
 	public int[][] updateHiddenSingle(int[][] array, int index, String type)
 	{
 		/*
@@ -96,6 +125,14 @@ public class Tactics extends Board3d
 		return array;
 	}
 	
+	/**
+	 * Updates the sudoku, if there are type 1 locked candidates in the sudoku.
+	 * This method iterates through all the values and quadrants to check for locked candidates.
+	 * 
+	 * @param  board The 3d board state to be updated.
+	 * 
+	 * @return The updated 3d board state.
+	 */
 	public Board3d lockedCandidates1Tactic(Board3d board)
 	{
 		//Iterate through all values, and quadrants
@@ -111,6 +148,15 @@ public class Tactics extends Board3d
 		return board;
 	}
 
+	/**
+	 * Checks in a specific quadrant if there is a locked candidate for the specified value.
+	 * If it finds a locked candidate it removes it from the 3d board state.
+	 * 
+	 * @param   board  The board to be updated.
+	 * @param   value The value to be updated
+	 * @param   q The quadrant to be checked.
+	 * @return  The updated 3d board state.
+	 */
 	public Board3d updateLockedCandidatesValQ(Board3d board, int value, int q)
 	{
 		int row = valueOnSingleRowOrColumnOfQuadrant(q, value, "row");
@@ -132,7 +178,16 @@ public class Tactics extends Board3d
 		return board;
 	}
 
-
+	/**
+	 * Checks how many times a value appears in a row or column in a specified quadrant.
+	 * 
+	 * 
+	 * @param board The 3d board state to be updated.
+	 * @param q The number of the quadrant.
+	 * @param value The value which needs to be searched for.
+	 * @param rowOrColumn  Contains the value "row" or "column", so there can be determined in what this method is searching.
+	 * @return A row or column number.
+	 */
 	public int valueOnSingleRowOrColumnOfQuadrant(Board3d board, int q, int value, String rowOrColumn)
 	{
 		//count how many times the value appears in every row
@@ -148,8 +203,6 @@ public class Tactics extends Board3d
 				{
 					returnValue = -1;
 				}
-
-
 				if(checkCellHasValue(board.getCell(i, j), value) &&
 						countAmountNotZero(board.getCell(i, j)) != 1)
 				{
@@ -190,14 +243,20 @@ public class Tactics extends Board3d
 				returnValue += quadToCol(q);
 			}
 		}
-
-
 		return returnValue;
 	}
 
-	
-	
-	
+	/**
+	 * This method deletes a value in a specified row.
+	 * The quadrant number is needed, so that there can be checked that
+	 * the quadrant doesn't contain the value.
+	 * 
+	 * @param  board The 3dboard state which needs to be updated.
+	 * @param  row The row the value needs to be deleted from.
+	 * @param  value The value that needs to be deleted.
+	 * @param  q The quadrant the value needs to be deleted from.
+	 * @return The updated 3Dboard state.
+	 */
 	public Board3d deleteValueFromRow(Board3d board, int row, int value, int q)
 	{
 		//walk through row
@@ -218,6 +277,17 @@ public class Tactics extends Board3d
 		return board;
 	}
 
+	/**
+	 * This method deletes a value in a specified column.
+	 * The quadrant number is needed, so that there can be checked that
+	 * the quadrant doesn't contain the value.
+	 * 
+	 * @param  board The 3dboard state which needs to be updated.
+	 * @param  column The column the value needs to be deleted from.
+	 * @param  value The value that needs to be deleted.
+	 * @param  q The quadrant the value needs to be deleted from.
+	 * @return The updated 3Dboard state.
+	 */
 	public Board3d deleteValueFromColumn(Board3d board, int column, int value, int q)
 	{
 		//walk through column
@@ -236,6 +306,14 @@ public class Tactics extends Board3d
 		return board;
 	}
 	
+	/**
+	 * Calls all the tactical methods, to solve the sudoku.
+	 * The method also keeps track of the progress, if there is no progress
+	 * it returns the update 3d board state.
+	 * 
+	 * @param  board The 3d board state which needs to be updated.
+	 * @return The updated 3d board state.
+	 */
 	public Board3d useAllTactics(Board3d board)
 	{
 		double progress1 = 0;
@@ -255,6 +333,13 @@ public class Tactics extends Board3d
 		return board;
 	}
 
+	/**
+	 * Updates the sudoku, if there are type 2 locked candidates in the sudoku.
+	 * This method iterates through all the values and quadrants to check for locked candidates.
+	 * 
+	 * @param  board The 3d board state to be updated.
+	 * @return The updated 3d board state.
+	 */
 	public Board3d lockedCandidates2Tactic(Board3d board)
 	{
 		//for all rows 
@@ -274,7 +359,6 @@ public class Tactics extends Board3d
 				}
 			}
 		}
-
 		//for all columns c
 		for(int j = 1; j < SUDOKU_LENGTH; j++)
 		{
@@ -291,12 +375,20 @@ public class Tactics extends Board3d
 					deleteValueFromQuadrant(board, q, j, v, "column");
 				}
 			}
-		}	
+		}
 		return board;
 	}
 
-	
-
+	/**
+	 * Deletes a value from a quadrant.
+	 * This method deletes a value from a specified quadrant.
+	 * 
+	 * @param board The board3d to be updated.
+	 * @param q     The quadrant the value needs to be deleted from.
+	 * @param index	  The index of which the cell, which may not be deleted.
+	 * @param value	  The value which, needs to be deleted.
+	 * @param rowOrColumn  Specifying whether the value needs to be deleted from a row or column.
+	 */
 	public void deleteValueFromQuadrant(Board3d board, int q, int index, int value, String rowOrColumn)
 	{
 		//iterate through quadrant
@@ -310,12 +402,12 @@ public class Tactics extends Board3d
 				if(j != index && rowOrColumn.equals("column") && board.checkCellHasValue(i, j, value))
 				{
 					//System.out.printf(printChange("Locked Candidates 2c", i, j, value, "deleted"));
-					System.out.println("locked2 deleted "+ value + " from [" + i + "," + j + "]"); 
+					System.out.println("locked2 deleted " + value + " from [" + i + "," + j + "]"); 
 					
 					board.deleteValue(i, j, value);
-				} else if(i != index && rowOrColumn.equals("row")&& board.checkCellHasValue(i, j, value))
+				} else if(i != index && rowOrColumn.equals("row") && board.checkCellHasValue(i, j, value))
 				{
-					System.out.println("locked2 deleted "+ value + " from [" + i + "," + j + "]"); 
+					System.out.println("locked2 deleted " + value + " from [" + i + "," + j + "]"); 
 					
 					//System.out.printf(printChange("Locked Candidates 2r", i, j, value, "deleted"));
 					board.deleteValue(i, j, value);
@@ -324,6 +416,14 @@ public class Tactics extends Board3d
 		}
 	}
 
+	/**
+	 * This method checks in which quadrant the value from a specified column is.
+	 * 
+	 * @param board The 3d board state.
+	 * @param c The column number.
+	 * @param value The value to be checked for.
+	 * @return The quadrant, in which the value is found.
+	 */
 	public int columnValuesOnlyInQuad(Board3d board, int c, int value)
 	{
 		//countArray counts for every cell in column if it how many times it appears in
@@ -360,6 +460,14 @@ public class Tactics extends Board3d
 		return returnValue;
 	}
 
+	/**
+	 * This method checks in which quadrant the value from a specified row is.
+	 * 
+	 * @param board The 3d board state.
+	 * @param r The row number.
+	 * @param value The value to be checked for.
+	 * @return The quadrant, in which the value is found.
+	 */
 	public int rowValuesOnlyInQuad(Board3d board, int r, int value)
 	{
 		//countArray counts for every cell in row if it how many times it appears in

@@ -10,6 +10,33 @@ public class Board2d
 	static final int SUDOKU_LENGTH = 9;
 	static final int QUAD_LENGTH = 3;
 
+	/**
+	 * The constructor to instantiate a 2d sudoku.
+	 * The constructor also checks whether the sudoku is not conflicting. 
+	 * Exits the program is the sudoku is conflicting. Reads a sudoku from a file
+	 * to load into the field.
+	 */
+	public Board2d()
+	{
+		int[][] sudoku = readSudoku();
+		if(checkNotConflicting(sudoku))
+		{
+			this.sudoku = sudoku;
+		}
+		else
+		{
+			System.out.printf("The entered sudoku had conflicting cells, please try again.\n");
+			System.exit(1);
+		}
+	} 
+	
+	/**
+	 * The constructor to instantiate a 2d sudoku.
+	 * The constructor also checks whether the sudoku is not conflicting. 
+	 * Exits the program is the sudoku is conflicting.
+	 * 
+	 * @param sudoku The sudoku to work with.
+	 */
 	public Board2d(int[][] sudoku)
 	{
 		if(checkNotConflicting(sudoku))
@@ -21,10 +48,18 @@ public class Board2d
 			System.out.printf("The entered sudoku had conflicting cells, please try again.\n");
 			System.exit(1);
 		}
-		//readSudoku();
 	}                                     
 
+	/**
+	 * This method reads the sudoku from a file.
+	 * This method reads just 81 characters on a single line. So that behind the sudoku,
+	 * it is possible to put some comments about the sudoku being read. 
+	 * 
+	 * @return The read sudoku.
+	 */
 	public int[][] readSudoku(){
+		int[][] sudoku = new int[9][9];
+		
 		try{
 			FileInputStream fstream = new FileInputStream("sudoku.txt");
 			DataInputStream in = new DataInputStream(fstream);
@@ -41,9 +76,21 @@ public class Board2d
 		}catch(Exception e){
 			System.out.printf("Error: " + e.getMessage());
 		}
-		return getSudoku();
+		return sudoku;
 	}
 
+	/**
+	 * Returns whether a certain value can be filled in a cell.
+	 * This method checks whether it is possible to fill in a cell with 
+	 * a certain value.
+	 * 
+	 * @param i The row number.
+	 * @param j The column number.
+	 * @param possibleNum The value to be checked.
+	 * @param sudoku The 2d sudoku used for checking.
+	 * @return <code>True</code> if the poss number can be filled in, 
+	 * 		return <code>false</code> otherwise.
+	 */
 	public boolean possibleNumbers(int i, int j, int possibleNum, int[][] sudoku)
 	{
 		boolean possible = true;
@@ -80,6 +127,14 @@ public class Board2d
 		return possible;
 	}
 	
+	/**
+	 * Returns whether the sudoku is completely filled.
+	 * This method checks for every cell, whether it contains a zero, 
+	 * if so return <code>false</code>, otherwise return <code>true</code>
+	 * 
+	 * @return Return <code>false</code> if a zero is found,
+	 * 		 otherwise return <code>true</code>
+	 */
 	public boolean sudVol()
 	{
 		boolean solved = true;
@@ -97,6 +152,14 @@ public class Board2d
 		return solved;
 	}
 
+	/**
+	 * Returns the percentage solved as an int.
+	 * Determines for what percentage the sudoku is filled in.
+	 * And returns it as an integer.
+	 * 
+	 * @param sudoku The sudoku to be checked.
+	 * @return The percentage as an Integer.
+	 */
 	public int percentageSolved2d(int[][] sudoku)
 	{
 		int count = 0;
@@ -114,6 +177,16 @@ public class Board2d
 		return (int) (100 * count / 81.0);
 	}
 	
+	/**
+	 * Returns the updated sudoku.
+	 * This method calls for the tactics to be performed on the sudoku.
+	 * This is done by transforming the 2d sudoku back to the 3d one,
+	 * so that the tactics can be performed, after which, it needs to be converted
+	 * back to a 2d sudoku.
+	 * 
+	 * @param sudoku The 2d sudoku to be updated.
+	 * @return The updated 2d sudoku.
+	 */
 	public int[][] tactics(int[][] sudoku)
 	{
 		Tactics tactics = new Tactics();
@@ -125,6 +198,15 @@ public class Board2d
 		return sudoku;
 	}
 
+	/**
+	 * Returns whether the sudoku is completely filled.
+	 * This method checks for every cell, whether it contains a zero, 
+	 * if so return <code>false</code>, otherwise return <code>true</code>
+	 * 
+	 * @param sudoku The 2d sudoku, which needs to be checked.
+	 * @return Return <code>false</code> if a zero is found,
+	 * 		 otherwise return <code>true</code>
+	 */
 	public boolean sudVol(int[][] sudoku)
 	{
 		boolean vol = true;
@@ -140,10 +222,18 @@ public class Board2d
 		return vol;
 	}
 	
+	/**
+	 * Returns the best cell to try to fill using backtracking.
+	 * This method determines the best cell to fill, by taking the cell
+	 * with the least amount of possibilities for that cell
+	 * 
+	 * @param sudoku The sudoku of which the best cell needs to be found
+	 * @return The row and column index of the best cell.
+	 */
 	public int[] bestCell(int[][] sudoku)
 	{
 		int minimum = 100;
-		int coord[] = new int[3];
+		int coord[] = new int[2];
 		
 		for(int i = 0; i < SUDOKU_LENGTH; i++)
 		{
@@ -166,14 +256,20 @@ public class Board2d
 					minimum = pos;
 					coord[0] = i;
 					coord[1] = j;
-					coord[2] = minimum;
 				}
 			}
 		}
 		return coord;
 	}
-	
-	
+
+	/**
+	 * Returns true if the sudoku is solved.
+	 * This method uses backtracking to solve the sudoku."
+	 * As long as the sudoku isn't solved it calls itself again.
+	 * 
+	 * @return Return <code>true</code> if the sudoku is solved, 
+	 * 	   otherwise return <code>false</code>.
+	 */
 	public boolean solveBackTrack(int i, int j, int[][] sudoku)
 	{
 		if(!checkNotConflicting(sudoku))
@@ -223,8 +319,13 @@ public class Board2d
 	}
 
 	
-	/* this method prints sudoku, zeros at cells unknown
-	 * else print value
+	/**
+	 * Returns string ready for printing. 
+	 * This method creates a string of the sudoku, 
+	 * and places zeros at cells of which the value 
+	 * is unknown.
+	 * 
+	 * @return The 2d sudoku ready for printing.
 	 */
 	public String toString2()
 	{
@@ -245,7 +346,13 @@ public class Board2d
 		return output;
 	}
 
-	
+	/**
+	 * Returns String ready for printing.
+	 * Creates a string of the 2d sudoku, which can be printed, 
+	 * with some extra lines for better readability.
+	 * 
+	 * @return The 2d sudoku, which can be printed.
+	 */ 
 	public String toString(){
 		
 		String output = "";	
@@ -264,9 +371,13 @@ public class Board2d
 			return output;
 		}
 
-	/*
-	 * count how many nonzero-values a single cell has
+	/**
+	 * Return amount non-zero entries cell.
+	 * Count how many nonzero-values a single cell has
 	 * i.e. how many possibilities has this cell at this moment
+	 * 
+	 * @param array The cell of which the nonzero entries need to be counted
+	 * @return The amount of nonzero entries.
 	 */
 	public int countAmountNotZero(int[] array)
 	{
@@ -285,10 +396,15 @@ public class Board2d
 		return count;
 	}
 
-	/*
-	 * This method checks if a 1x9 array has all ones
+	/**
+	 * Checks if array contains only ones.
+	 * This method checks if a 1x9 array has all ones.
+	 * 
+	 * @param array The array to be checked.
+	 * @return Returns <code>true</code> if array contains only ones
+	 * 		   returns <code>false</code> otherwise.
 	 */
-	public boolean checkAllOne(int array[])
+	public boolean checkAllOne(int[] array)
 	{
 		boolean allOne = true;
 		//Iterate through array
@@ -302,8 +418,16 @@ public class Board2d
 		}
 		return allOne;
 	}
-	
-	public boolean checkNoDoubles(int array[])
+
+	/**
+	 * Return whether an array contains no double values.
+	 * This method returns, whether an array contains no multiple entries of the same value.
+	 * 
+	 * @param array The array to be checked.
+	 * @return Returns <code>true</code>, if no doubles are found, 
+	 * 		   <code>false</code> otherwise.
+	 */
+	public boolean checkNoDoubles(int[] array)
 	{
 		for(int i = 0; i < array.length; i++)
 		{
@@ -316,12 +440,14 @@ public class Board2d
 		return true;
 	}
 
-	/* 
-	 * *************************************************************************
-	 * *************************************************************************
-	 * This method checks if the sudoku is filled in completely and correct
-	 * *************************************************************************
-	 * *************************************************************************
+	/**
+	 * Returns whether there are no conflicting values.
+	 * This method checks for each row, column and quadrant, whether there are
+	 * no multiple occurences of the same value.
+	 * 
+	 * @param sudoku The 2d sudoku.
+	 * @return Returns <code>true</code>, if no conflicting values are found, 
+	 * 		   <code>false</code> otherwise.
 	 */
 	public boolean checkNotConflicting(int[][] sudoku)
 	{
@@ -345,7 +471,16 @@ public class Board2d
 		return true;
 	}
 	
-	
+	/**
+	 * Returns if row contains no double values.
+	 * This method returns a boolean, which says whether a row contains
+	 * same value multiple times.
+	 * 
+	 * @param sudoku The 2d sudoku.
+	 * @param i The row number.
+	 * @return Returns <code>true</code>, if no doubles are found, 
+	 * 		   <code>false</code> otherwise.
+	 */
 	public boolean checkRowNoDoubles(int[][] sudoku, int i)
 	{
 		int countArray[] = new int[9];
@@ -358,7 +493,17 @@ public class Board2d
 		}
 		return checkNoDoubles(countArray);
 	}
-	
+
+	/**
+	 * Returns if column contains no double values.
+	 * This method returns a boolean, which says whether a column contains
+	 * same value multiple times.
+	 * 
+	 * @param sudoku The 2d sudoku.
+	 * @param j The column number.
+	 * @return Returns <code>true</code>, if no doubles are found, 
+	 * 		   <code>false</code> otherwise.
+	 */
 	public boolean checkColumnNoDoubles(int[][] sudoku, int j)
 	{
 		int countArray[] = new int[9];
@@ -373,8 +518,18 @@ public class Board2d
 
 	
 	}
-	
-	public boolean checkQuadNoDoubles(int [][] sudoku,int q)
+
+	/**
+	 * Returns if quadrant contains no double values.
+	 * This method returns a boolean, which says whether a quadrant contains
+	 * same value multiple times.
+	 * 
+	 * @param sudoku The 2d sudoku.
+	 * @param q The quadrant number.
+	 * @return Returns <code>true</code>, if no doubles are found, 
+	 * 		   <code>false</code> otherwise.
+	 */
+	public boolean checkQuadNoDoubles(int[][] sudoku, int q)
 	{
 		int countArray[] = new int[SUDOKU_LENGTH];
 
@@ -395,20 +550,14 @@ public class Board2d
 		return checkNoDoubles(countArray);
 	}
 		
-	/*Method quadrant to coordinate
-	 *returns a coord as a 2x1 array
-	 *this array is the the coordinate of the upper left corner of quadrant q
+	/**
+	 * Converts quadrant to coordinate.
+	 * Returns a coord as a 2x1 array,
+	 * this array is the the coordinate 
+	 * of the upper left corner of quadrant q.
 	 *
-	 * 012345678
-	 *0 
-	 *1 0  1  2 
-	 *2 
-	 *3
-	 *4 3  4  5
-	 *5
-	 *6
-	 *7 6  7  8
-	 *8
+	 * @param q The quadrant number.
+	 * @return A 2x1 array of the coordinates of the upperleft corner.
 	 */
 	public int[] q2c(int q)
 	{
@@ -417,18 +566,42 @@ public class Board2d
 		return startCoord;
 	}
 
+	/**
+	 * Set the sudoku with a new sudoku.
+	 * Replace the old sudoku, with another one.
+	 * 
+	 * @param sudoku The new sudoku.
+	 */ 
 	public void setSudoku(int[][] sudoku) {
 		this.sudoku = sudoku;
 	}
 
+	/**
+	 * Returns current sudoku.
+	 * This method returns the current sudoku in use.
+	 * 
+	 * @return The current sudoku.
+	 */ 
 	public int[][] getSudoku() {
 		return sudoku;
 	}
 
+	/**
+	 * Set the counter.
+	 * Set the counter field to a specific value.
+	 * 
+	 * @param count The new value for the counter.
+	 */
 	public void setCount(int count) {
 		this.count = count;
 	}
 
+	/**
+	 * Get the counter.
+	 * Return the counter field.
+	 * 
+	 * @return The counter value.
+	 */
 	public int getCount() {
 		return count;
 	}	
