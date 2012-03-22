@@ -20,7 +20,7 @@ public class Sudoku
 		if(board.checkSolved())
 		{
 			System.out.println("Sudoku is opgelost!");
-			System.out.println(board);
+			System.out.println(board.toString2());
 		} else
 		{
 			System.out.println("\nHet is niet gelukt om sudoku op te lossen,\nverder proberen dmv backtracken? (j/n)");

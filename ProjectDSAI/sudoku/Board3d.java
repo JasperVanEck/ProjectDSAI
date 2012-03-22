@@ -771,15 +771,23 @@ public class Board3d
 			for(int j = 0; j < SUDOKU_LENGTH; j++)
 			{
 				if(getValue(i, j) != 0)
+				{
 					output = output + getValue(i, j);
-				else 
+				}
+				else
+				{ 
 					output = String.format(output + "0");
+				}
 				if((j + 1) % 3 == 0)
+				{
 					output = output + " ";
+				}
 			}
 			output = output + "\n";
 			if( (i + 1) % 3 == 0)
+			{
 				output = output + "\n";
+			}
 		}
 		return output;
 	}
